@@ -76,9 +76,10 @@ int sn_get_color_val(){
 	}
 }
 
-void sn_set_color_mode(){
+int sn_set_color_mode(){
 	if ( ev3_search_sensor( LEGO_EV3_COLOR, &sn_color, 0 )) {
 		set_sensor_mode(sn_color, COLOR_COL_COLOR);
+		return 0;
 	} else {
 		printf( "COLOR sensor was NOT FOUND!\n" );
 		return -1;
