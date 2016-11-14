@@ -76,6 +76,16 @@ int sn_get_color_val(){
 	}
 }
 
+void sn_set_color_mode(){
+	if ( ev3_search_sensor( LEGO_EV3_COLOR, &sn_color, 0 )) {
+		set_sensor_mode(sn_color, COLOR_COL_COLOR);
+	} else {
+		printf( "COLOR sensor was NOT FOUND!\n" );
+		return -1;
+	}
+}
+
+
 float sn_get_compas_val(){
 	if (ev3_search_sensor(HT_NXT_COMPASS, &sn_compass,0)){
 		if ( !get_sensor_value0(sn_compass, &value )) {
@@ -115,6 +125,8 @@ float sn_get_mag_val(){
 
 
 
+
+COLOR_COL_COLOR
 
 
 
