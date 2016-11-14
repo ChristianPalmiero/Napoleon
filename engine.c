@@ -38,6 +38,9 @@ int engine_init( void )
 /* Print connected tachos */
 void engine_list ( void )
 {
+    int i;
+    char s[256];
+
     printf( "Found tacho motors:\n" );
     for ( i = 0; i < DESC_LIMIT; i++ ) {
         if ( ev3_tacho[ i ].type_inx != TACHO_TYPE__NONE_ ) {
@@ -50,8 +53,25 @@ void engine_list ( void )
     return;
 }
 
+/* Reset tachos */
+void engine_reset ( void )
+{
+    uint8_t sn;
+    int port;
+    
+    port = RIGHT;
+    if (ev3_search_tacho_plugged_in (port, 0, &sn, 0))
+        set_tacho_command_inx( sn, TACHO_RESET );
+
+    port = RIGHT;
+    if (ev3_search_tacho_plugged_in (port, 0, &sn, 0))
+        set_tacho_command_inx( sn, TACHO_RESET );
+   
+    return;
+}
+
 /* Go straight for a specified amount of seconds */
-void go_straight ( int seconds )
+void go_straight_limited ( int seconds )
 {
     int port;
     uint8_t sn;
@@ -68,6 +88,7 @@ void go_straight ( int seconds )
         set_tacho_time_sp( sn, seconds * 1000 );
         set_tacho_ramp_up_sp( sn, 1000 );
         set_tacho_ramp_down_sp( sn, 1000 );
+        set_tacho_position_sp( sn, 0 );
         set_tacho_command_inx( sn, TACHO_RUN_TIMED );
     }
     else {
@@ -86,11 +107,14 @@ void go_straight ( int seconds )
         set_tacho_time_sp( sn, seconds * 1000 );
         set_tacho_ramp_up_sp( sn, 1000 );
         set_tacho_ramp_down_sp( sn, 1000 );
+        set_tacho_position_sp (sn, 0 );
         set_tacho_command_inx( sn, TACHO_RUN_TIMED );
     }
     else {
         printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
     }
+
+    return;
 }
 
 /* Go straight forever */
@@ -103,15 +127,15 @@ void go_straight ( void )
     if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
         int max_speed;
         
-        printf( "LEGO_EV3_M_MOTOR on port %c is found, run for %d sec...\n",  port, seconds);
+        printf( "LEGO_EV3_M_MOTOR on port %c is found, run forever...\n",  port);
         get_tacho_max_speed( sn, &max_speed );
         printf( " max speed = %d\n", max_speed );
         set_tacho_stop_action_inx( sn, TACHO_COAST );
         set_tacho_speed_sp( sn, - max_speed / 3.3 );
-        set_tacho_time_sp( sn, seconds * 1000 );
         set_tacho_ramp_up_sp( sn, 1000 );
         set_tacho_ramp_down_sp( sn, 1000 );
-        set_tacho_command_inx( sn, TACHO_RUN_TIMED );
+        set_tacho_position_sp( sn, 0);
+        set_tacho_command_inx( sn, TACHO_RUN_FOREVER );
     }
     else {
         printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
@@ -121,19 +145,21 @@ void go_straight ( void )
     if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
         int max_speed;
         
-        printf( "LEGO_EV3_M_MOTOR on port %c is found, run for %d sec...\n",  port, seconds);
+        printf( "LEGO_EV3_M_MOTOR on port %c is found, run forever...\n",  port);
         get_tacho_max_speed( sn, &max_speed );
         printf( " max speed = %d\n", max_speed );
         set_tacho_stop_action_inx( sn, TACHO_COAST );
         set_tacho_speed_sp( sn, - max_speed);
-        set_tacho_time_sp( sn, seconds * 1000 );
         set_tacho_ramp_up_sp( sn, 1000 );
         set_tacho_ramp_down_sp( sn, 1000 );
+        set_tacho_position_sp ( sn, 0 );
         set_tacho_command_inx( sn, TACHO_RUN_FOREVER );
     }
     else {
         printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
     }
+
+    return;
 }
 
 /* Stop the engines */
@@ -143,7 +169,6 @@ void engine_stop ( void )
     uint8_t sn;
     
     printf( "Stop the engines...\n" );
-    
     port = RIGHT;
     if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
         set_tacho_stop_action_inx( sn, TACHO_COAST );
@@ -157,4 +182,82 @@ void engine_stop ( void )
         set_tacho_ramp_down_sp( sn, 1000 );
         set_tacho_command_inx( sn, TACHO_STOP );
     }
+
+    return;
+}
+
+/* Turn right */
+void turn_right ( void )
+{
+    int port;
+    uint8_t sn;
+
+    engine_stop();
+
+    port = LEFT;
+    if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
+        int max_speed;
+        
+        printf( "LEGO_EV3_M_MOTOR on port %c is found, right...\n",  port);
+        get_tacho_max_speed( sn, &max_speed );
+        printf( " max speed = %d\n", max_speed );
+        set_tacho_speed_sp( sn, - max_speed / 2);
+        set_tacho_ramp_up_sp( sn, 0 );
+        set_tacho_ramp_down_sp( sn, 0 );
+        // -900 = turn right of 90°
+        set_tacho_position_sp( sn, -900);
+        for (int i=0; i<8; i++)
+            set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS );
+    }
+    else {
+        printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
+    }
+    
+    engine_reset();
+}
+
+/* Turn left */
+void turn_left ( void )
+{
+    int port;
+    uint8_t sn;
+
+    engine_stop();
+
+    port = RIGHT;
+    if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
+        int max_speed;
+        
+        printf( "LEGO_EV3_M_MOTOR on port %c is found, turn left...\n",  port);
+        get_tacho_max_speed( sn, &max_speed );
+        printf( " max speed = %d\n", max_speed );
+        set_tacho_speed_sp( sn, - max_speed / 2);
+        set_tacho_ramp_up_sp( sn, 0 );
+        set_tacho_ramp_down_sp( sn, 0 );
+        // -900 = turn left of 90°
+        set_tacho_position_sp( sn, -900);
+        for (int i=0; i<8; i++)
+            set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS );
+    }
+    else {
+        printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
+    }
+    
+    sleep(3);    
+    engine_reset();
+}
+
+int main ( void ) {
+
+    if ( ev3_init() == -1 ) return ( 1 );
+    
+    engine_init();
+    engine_list();
+    turn_left();
+    //turn_right();
+    //go_straight();
+    //sleep(5);
+    engine_stop();
+    
+    return 0;
 }
