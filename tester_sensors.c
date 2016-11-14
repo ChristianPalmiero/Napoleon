@@ -30,7 +30,7 @@ int main(){
 	if ( ev3_init() == -1 ) return ( 1 );
 	sn_init();
 	sn_lookup();
-	sn_set_color_mode
+	sn_set_color_mode();
 	sn_lookup();
 	while(1){
 		int col = sn_get_color_val();

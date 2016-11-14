@@ -122,15 +122,3 @@ float sn_get_mag_val(){
 		return -1;
 	}
 }
-
-
-
-
-
-COLOR_COL_COLOR
-
-
-
-
-
-
