@@ -30,6 +30,12 @@ int main(){
 	if ( ev3_init() == -1 ) return ( 1 );
 	sn_init();
 	sn_lookup();
+	while(1){
+		int col = sn_get_color_val();
+		printf( "\r(%s) \n", color[ val ]);
+		fflush( stdout );
+		sleep(1);
+	}
 	ev3_uninit();
 
 }
