@@ -100,7 +100,7 @@ float sn_get_sonar_val(){
 	}
 }
 
-int sn_get_color_val(){
+float sn_get_mag_val(){
 	if (ev3_search_sensor(NXT_ANALOG, &sn_mag,0)){
 		if ( !get_sensor_value0(sn_mag, &value )) {
 			value = 0;
