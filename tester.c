@@ -86,7 +86,7 @@ int main( void )
         if (port==65)
             set_tacho_speed_sp( sn, - max_speed / 3.3 );
         //Else if left motor (port D)
-		else if (port==69)
+		else if (port==68)
             set_tacho_speed_sp( sn, - max_speed);
         
         set_tacho_time_sp( sn, 15000 );
