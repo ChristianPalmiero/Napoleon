@@ -69,7 +69,7 @@ int sn_get_color_val(){
 		if ( !get_sensor_value( 0, sn_color, &val ) || ( val < 0 ) || ( val >= COLOR_COUNT )) {
 			val = 0;
 		}
-		return value;
+		return val;
 	} else {
 		printf( "COLOR sensor was NOT FOUND!\n" );
 		return -1;
