@@ -30,7 +30,7 @@ int main(){
 	if ( ev3_init() == -1 ) return ( 1 );
 	sn_init();
 	sn_lookup();
-	ev3_deinit();
+	ev3_uninit();
 
 }
 
