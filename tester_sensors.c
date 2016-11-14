@@ -33,8 +33,8 @@ int main(){
 	sn_set_color_mode();
 	sn_lookup();
 	while(1){
-		int col = sn_get_color_val();
-		printf( "\r(%s) \n", color[ col ]);
+		float col = sn_get_sonar_val();
+		printf( "\r(%f) \n", col);
 		fflush( stdout );
 		sleep(1);
 	}
