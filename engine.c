@@ -213,7 +213,10 @@ void turn_right ( void )
         printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
     }
     
+    sleep(3);   
     engine_reset();
+
+    return;
 }
 
 /* Turn left */
@@ -245,6 +248,8 @@ void turn_left ( void )
     
     sleep(3);    
     engine_reset();
+    
+    return;
 }
 
 int main ( void ) {
@@ -254,9 +259,9 @@ int main ( void ) {
     engine_init();
     engine_list();
     turn_left();
-    //turn_right();
-    //go_straight();
-    //sleep(5);
+    turn_right();
+    go_straight();
+    sleep(5);
     engine_stop();
     
     return 0;
