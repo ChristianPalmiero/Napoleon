@@ -33,10 +33,10 @@ int main(){
 	int col;
 	while(1){
 	//	sn_color_set_mode("COL-COLOR");
-		col = sn_get_mag_val();
+		col = sn_get_compass_val();
 		printf("%d\n", col);
 		fflush( stdout );
-//		sleep(1);
+		sleep(1);
 	}
 	ev3_uninit();
 

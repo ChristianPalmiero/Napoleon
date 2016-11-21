@@ -87,7 +87,7 @@ int sn_color_set_mode(char* mode){
 	}
 }
 
-float sn_get_compas_val(){
+int sn_get_compass_val(){
 	if (ev3_search_sensor(HT_NXT_COMPASS, &sn_compass,0)){
 		if ( !get_sensor_value0(sn_compass, &value )) {
 			value = 0;

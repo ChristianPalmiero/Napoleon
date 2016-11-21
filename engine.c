@@ -3,6 +3,7 @@
 #include "ev3.h"
 #include "ev3_port.h"
 #include "ev3_tacho.h"
+#include "sensors.c"
 
 #define RIGHT 65
 #define LEFT 68
@@ -194,11 +195,13 @@ void engine_stop ( void )
 /*Turn right of x degrees*/
 void turn_right ( int x )
 {
-    int port;
+    int port, initial, amount;
     uint8_t sn, sn2;
 
     engine_stop();
+    sn_init();
 
+    initial = sn_get_compass_val();
     port = LEFT;
     if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
         printf( "LEGO_EV3_M_MOTOR on port %c is found, right...\n",  port);
@@ -215,8 +218,6 @@ void turn_right ( int x )
         	set_tacho_speed_sp( sn, - max_speed / 2);
         	set_tacho_ramp_up_sp( sn, 0 );
         	set_tacho_ramp_down_sp( sn, 0 );
-        	// -x*10 = turn right of x°
-        	set_tacho_position_sp( sn, -x*10);
         	
 		// Right track
 		get_tacho_max_speed( sn2, &max_speed_2 );
@@ -224,22 +225,20 @@ void turn_right ( int x )
                 set_tacho_speed_sp( sn2, - max_speed_2 / 2);
                 set_tacho_ramp_up_sp( sn2, 0 );
                 set_tacho_ramp_down_sp( sn2, 0 );
-                // x*10 = turn left of x°
-                set_tacho_position_sp( sn2, x*10);
 
-		for (int i=0; i<8; i++) {
-            		set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS );
-            		set_tacho_command_inx( sn2, TACHO_RUN_TO_REL_POS );
+		amount = initial;
+		while (  amount < (initial+x) ) {
+            		set_tacho_command_inx( sn, TACHO_RUN_FOREVER);
+            		set_tacho_command_inx( sn2, TACHO_RUN_FOREVER);
+  			amount = sn_get_compass_val();
 		}
+		engine_stop();
 	}
     }
     else {
         printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
     }
     
-    sleep(3);   
-    engine_reset();
-
     return;
 }
 
@@ -343,13 +342,13 @@ void close_ball ( void )
 	// Front engine
 	get_tacho_max_speed( sn, &max_speed );
        	printf( " max speed = %d\n", max_speed );
-       	set_tacho_speed_sp( sn, - max_speed / 2);
+       	set_tacho_speed_sp( sn, - max_speed / 3);
        	set_tacho_ramp_up_sp( sn, 0 );
        	set_tacho_ramp_down_sp( sn, 0 );
-       	set_tacho_position_sp( sn, +40);
+       	set_tacho_position_sp( sn, +37);
         	
 	for (int i=0; i<8; i++) {
-        	set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS );
+        	set_tacho_command_inx( sn, TACHO_RUN_TO_ABS_POS );
 	}
     }
     else {
@@ -364,15 +363,15 @@ int main ( void ) {
     if ( ev3_init() == -1 ) return ( 1 );
     
     engine_init();
-    //engine_list();
-    //turn_right(45);
+    engine_list();
+    turn_right(45);
     //go_straight();
-    //sleep(5);
-    //turn_left(45);
-    open_ball();
+    sleep(2);
+//    turn_left(45);
+    //open_ball();
     sleep(1);
-    close_ball();
-    //engine_stop();
+    //close_ball();
+    engine_stop();
     
     return 0;
 }
