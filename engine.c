@@ -218,18 +218,20 @@ void turn_right ( int x )
         	set_tacho_speed_sp( sn, - max_speed / 2);
         	set_tacho_ramp_up_sp( sn, 0 );
         	set_tacho_ramp_down_sp( sn, 0 );
-        	
+        	set_tacho_relative_pos(-10);
+
 		// Right track
 		get_tacho_max_speed( sn2, &max_speed_2 );
                 printf( " max speed = %d\n", max_speed_2 );
                 set_tacho_speed_sp( sn2, - max_speed_2 / 2);
                 set_tacho_ramp_up_sp( sn2, 0 );
                 set_tacho_ramp_down_sp( sn2, 0 );
+                set_tacho_relative_pos(10);
 
 		amount = initial;
 		while (  amount < (initial+x) ) {
-            		set_tacho_command_inx( sn, TACHO_RUN_FOREVER);
-            		set_tacho_command_inx( sn2, TACHO_RUN_FOREVER);
+            		set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS;);
+            		set_tacho_command_inx( sn2, TACHO_RUN_TO_REL_POS;
   			amount = sn_get_compass_val();
 		}
 		engine_stop();
