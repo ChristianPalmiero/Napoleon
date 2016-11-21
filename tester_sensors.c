@@ -35,14 +35,15 @@ int main(){
 	while(1){
 		sn_color_set_mode("COL-COLOR");
 		col = sn_get_color_val();
-		printf("$s \t\t\t", color[col]);
-		
+		printf("%s \t\t\t\n", color[col]);
+/*		
 		sn_color_set_mode("COL-REFLECT");
+		sleep(1);
 		col = sn_get_color_val();
 		printf( "%d \n", col);
-		
+*/		
 		fflush( stdout );
-		sleep(1);
+//		sleep(1);
 	}
 	ev3_uninit();
 

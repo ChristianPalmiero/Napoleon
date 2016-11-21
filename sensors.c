@@ -66,7 +66,7 @@ void sn_lookup(){
 
 int sn_get_color_val(){
 	if ( ev3_search_sensor( LEGO_EV3_COLOR, &sn_color, 0 )) {
-		if ( !get_sensor_value( 0, sn_color, &val ) || ( val < 0 ) || ( val >= COLOR_COUNT )) {
+		if ( !get_sensor_value( 0, sn_color, &val ) ) {
 			val = 0;
 		}
 		return val;
@@ -77,7 +77,7 @@ int sn_get_color_val(){
 }
 
 
-int sn_color_set_mode(char[] mode){
+int sn_color_set_mode(char* mode){
         if ( ev3_search_sensor( LEGO_EV3_COLOR, &sn_color, 0 )) {
 	        set_sensor_mode(sn_color, mode);
 	        return 0;
