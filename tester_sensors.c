@@ -30,11 +30,13 @@ int main(){
 	if ( ev3_init() == -1 ) return ( 1 );
 	sn_init();
 	sn_lookup();
-	sn_set_color_mode();
 	sn_lookup();
 	while(1){
-		float col = sn_get_sonar_val();
-		printf( "\r(%f) \n", col);
+		sn_color_set_mode("COL-COLOR");
+		int col = sn_get_color_val();
+		printf("$s \t\t\t", color[col]);
+		col = sn_color_set_mode("COL-REFLECT");
+		printf( "%d \n", col);
 		fflush( stdout );
 		sleep(1);
 	}
