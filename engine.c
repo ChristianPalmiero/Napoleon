@@ -218,7 +218,7 @@ void turn_right ( int x )
         	set_tacho_speed_sp( sn, - max_speed / 2);
         	set_tacho_ramp_up_sp( sn, 0 );
         	set_tacho_ramp_down_sp( sn, 0 );
-        	set_tacho_relative_pos(-10);
+        	set_tacho_position_sp(sn, -10);
 
 		// Right track
 		get_tacho_max_speed( sn2, &max_speed_2 );
@@ -226,7 +226,7 @@ void turn_right ( int x )
                 set_tacho_speed_sp( sn2, - max_speed_2 / 2);
                 set_tacho_ramp_up_sp( sn2, 0 );
                 set_tacho_ramp_down_sp( sn2, 0 );
-                set_tacho_relative_pos(10);
+                set_tacho_position_sp(sn, 10);
 
 		amount = initial;
 		while (  amount < (initial+x) ) {
