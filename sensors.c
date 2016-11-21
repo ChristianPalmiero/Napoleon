@@ -77,7 +77,7 @@ int sn_get_color_val(){
 }
 
 
-int sn_color_set_mode(const char[] mode){
+int sn_color_set_mode(char[] mode){
         if ( ev3_search_sensor( LEGO_EV3_COLOR, &sn_color, 0 )) {
 	        set_sensor_mode(sn_color, mode);
 	        return 0;

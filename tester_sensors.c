@@ -31,12 +31,16 @@ int main(){
 	sn_init();
 	sn_lookup();
 	sn_lookup();
+	int col;
 	while(1){
 		sn_color_set_mode("COL-COLOR");
-		int col = sn_get_color_val();
+		col = sn_get_color_val();
 		printf("$s \t\t\t", color[col]);
-		col = sn_color_set_mode("COL-REFLECT");
+		
+		sn_color_set_mode("COL-REFLECT");
+		col = sn_get_color_val();
 		printf( "%d \n", col);
+		
 		fflush( stdout );
 		sleep(1);
 	}
