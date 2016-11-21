@@ -230,8 +230,8 @@ void turn_right ( int x )
 
 		amount = initial;
 		while (  amount < (initial+x) ) {
-            		set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS;);
-            		set_tacho_command_inx( sn2, TACHO_RUN_TO_REL_POS;
+            		set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS);
+            		set_tacho_command_inx( sn2, TACHO_RUN_TO_REL_POS);
   			amount = sn_get_compass_val();
 		}
 		engine_stop();
