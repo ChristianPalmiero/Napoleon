@@ -99,7 +99,7 @@ float sn_get_compas_val(){
 	}
 }
 
-float sn_get_sonar_val(){
+int sn_get_sonar_val(){
 	if (ev3_search_sensor(LEGO_EV3_US, &sn_sonar,0)){
 		if ( !get_sensor_value0(sn_sonar, &value )) {
 			value = 0;
@@ -111,7 +111,7 @@ float sn_get_sonar_val(){
 	}
 }
 
-float sn_get_mag_val(){
+int sn_get_mag_val(){
 	if (ev3_search_sensor(NXT_ANALOG, &sn_mag,0)){
 		if ( !get_sensor_value0(sn_mag, &value )) {
 			value = 0;
