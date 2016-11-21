@@ -6,6 +6,7 @@
 
 #define RIGHT 65
 #define LEFT 68
+#define BALL 67
 
 // WIN32 /////////////////////////////////////////
 #ifdef __WIN32__
@@ -67,6 +68,10 @@ void engine_reset ( void )
     if (ev3_search_tacho_plugged_in (port, 0, &sn, 0))
         set_tacho_command_inx( sn, TACHO_RESET );
    
+    port = BALL;
+    if (ev3_search_tacho_plugged_in (port, 0, &sn, 0))
+        set_tacho_command_inx( sn, TACHO_RESET );
+    
     return;
 }
 
@@ -290,18 +295,84 @@ void turn_left ( int x )
     return;
 }
 
+/*Open the engine for grabbing the ball*/
+void open_ball ( void )
+{
+    int port;
+    uint8_t sn;
+
+    engine_stop();
+
+    port = BALL;
+    if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
+        printf( "LEGO_EV3_M_MOTOR on port %c is found, right...\n",  port);
+	int max_speed;
+
+	// Front engine
+	get_tacho_max_speed( sn, &max_speed );
+       	printf( " max speed = %d\n", max_speed );
+       	set_tacho_speed_sp( sn, - max_speed / 2);
+       	set_tacho_ramp_up_sp( sn, 0 );
+       	set_tacho_ramp_down_sp( sn, 0 );
+       	set_tacho_position_sp( sn, -40);
+        	
+	for (int i=0; i<8; i++) {
+        	set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS );
+	}
+    }
+    else {
+        printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
+    }
+    
+    return;
+}
+
+/*Close the engine for grabbing the ball*/
+void close_ball ( void )
+{
+    int port;
+    uint8_t sn;
+
+    engine_stop();
+
+    port = BALL;
+    if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
+        printf( "LEGO_EV3_M_MOTOR on port %c is found, right...\n",  port);
+	int max_speed;
+
+	// Front engine
+	get_tacho_max_speed( sn, &max_speed );
+       	printf( " max speed = %d\n", max_speed );
+       	set_tacho_speed_sp( sn, - max_speed / 2);
+       	set_tacho_ramp_up_sp( sn, 0 );
+       	set_tacho_ramp_down_sp( sn, 0 );
+       	set_tacho_position_sp( sn, +40);
+        	
+	for (int i=0; i<8; i++) {
+        	set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS );
+	}
+    }
+    else {
+        printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
+    }
+    
+    return;
+}
+
 int main ( void ) {
 
     if ( ev3_init() == -1 ) return ( 1 );
     
     engine_init();
     //engine_list();
-    //turn_left();
-    turn_right(45);
+    //turn_right(45);
     //go_straight();
-    sleep(5);
-    turn_left(45);
-    engine_stop();
+    //sleep(5);
+    //turn_left(45);
+    open_ball();
+    sleep(1);
+    close_ball();
+    //engine_stop();
     
     return 0;
 }

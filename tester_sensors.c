@@ -33,7 +33,7 @@ int main(){
 	int col;
 	while(1){
 	//	sn_color_set_mode("COL-COLOR");
-		col = sn_get_sonar_val();
+		col = sn_get_mag_val();
 		printf("%d\n", col);
 		fflush( stdout );
 //		sleep(1);
