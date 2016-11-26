@@ -178,14 +178,14 @@ void engine_stop ( void )
     port = RIGHT;
     if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
         set_tacho_stop_action_inx( sn, TACHO_COAST );
-        set_tacho_ramp_down_sp( sn, 1000 );
+        set_tacho_ramp_down_sp( sn, 0 );
         set_tacho_command_inx( sn, TACHO_STOP );
     }
 
     port = LEFT;
     if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
         set_tacho_stop_action_inx( sn, TACHO_COAST );
-        set_tacho_ramp_down_sp( sn, 1000 );
+        set_tacho_ramp_down_sp( sn, 0 );
         set_tacho_command_inx( sn, TACHO_STOP );
     }
 
@@ -226,13 +226,15 @@ void turn_right ( int x )
                 set_tacho_speed_sp( sn2, - max_speed_2 / 2);
                 set_tacho_ramp_up_sp( sn2, 0 );
                 set_tacho_ramp_down_sp( sn2, 0 );
-                set_tacho_position_sp(sn, 10);
+                set_tacho_position_sp(sn2, 10);
 
 		amount = initial;
-		while (  amount < (initial+x) ) {
+		int err=10;
+		while (  amount < (initial+x-err) ) {
             		set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS);
             		set_tacho_command_inx( sn2, TACHO_RUN_TO_REL_POS);
   			amount = sn_get_compass_val();
+                        printf("%d\t", amount);
 		}
 		engine_stop();
 	}
@@ -359,14 +361,14 @@ void close_ball ( void )
     
     return;
 }
-
+/*
 int main ( void ) {
 
     if ( ev3_init() == -1 ) return ( 1 );
     
     engine_init();
     engine_list();
-    turn_right(45);
+//    turn_right(90);
     //go_straight();
     sleep(2);
 //    turn_left(45);
@@ -377,3 +379,4 @@ int main ( void ) {
     
     return 0;
 }
+/*
