@@ -1,6 +1,6 @@
-MCR=/sys/class/tacho-motor/motor0
-MCL=/sys/class/tacho-motor/motor2
-GYRO_VAL=/sys/class/lego-sensor/sensor4/value0
+MCR=/sys/class/tacho-motor/motor2
+MCL=/sys/class/tacho-motor/motor1
+GYRO_VAL=/sys/class/lego-sensor/sensor2/value0
 SPEEDR=$1
 SPEEDL=$1
 FIX=$3
