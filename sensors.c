@@ -35,6 +35,7 @@ uint8_t sn_color;
 uint8_t sn_compass;
 uint8_t sn_sonar;
 uint8_t sn_mag;
+uint8_t sn_gyro;
 char s[ 256 ];
 int val;
 float value;
@@ -95,6 +96,18 @@ int sn_get_compass_val(){
 		return value;
 	} else {
 		printf("COMPASS sensor was NOT FOUND!\n");
+		return -1;
+	}
+}
+
+int sn_get_gyro_val(){
+	if (ev3_search_sensor(LEGO_EV3_GYRO, &sn_gyro,0)){
+		if ( !get_sensor_value0(sn_gyro, &value )) {
+			value = 0;
+		}
+		return -value; // INVERTED - GYRO IS MOUNTED UPSIDE DOWN!
+	} else {
+		printf("GYRO sensor was NOT FOUND!\n");
 		return -1;
 	}
 }
