@@ -1,19 +1,11 @@
 
 
 all:
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c tester.c -o output/tester.o
-	gcc output/tester.o -Wall -lm -lev3dev-c -o output/tester
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c sensors.c -o output/sensors.o
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c engines.c -o output/engines.o
+	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c main.c -o output/main.o
+	gcc output/sensors.o output/engines.o output/main.o -Wall -lm -lev3dev-c -o output/main
 
-sensor: 
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c tester_sensors.c -o output/tester_sensors.o
-	gcc output/tester_sensors.o -Wall -lm -lev3dev-c -o output/tester_sensors
-
-engine:
-	gcc -I./ev3dev-c/source/ev3 -O2 -std=gnu99 -W -Wall -Wno-comment -c engine.c -o output/engine.o
-	gcc output/engine.o -Wall -lm -lev3dev-c -o output/engine
-
-run:
-	./tester
 
 clean:
 	rm -f output/*

@@ -1,4 +1,4 @@
-#include "engine.h"
+#include "engines.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "ev3.h"
@@ -51,7 +51,7 @@ int engine_init( void ) {
     sn_engineLRM[3] = DESC_LIMIT;
 
     // Set default value of ramp up/down speed
-    multi_set_tacho_ramp_up_sp( sn_engineLRM, 0 ); // TODO: Check this value
+    multi_set_tacho_ramp_up_sp( sn_engineLRM, 1000 ); // TODO: Check this value
     multi_set_tacho_ramp_down_sp( sn_engineLRM, 0 ); // TODO: Check this value
     multi_set_tacho_stop_action_inx( sn_engineLRM, TACHO_HOLD );
 
@@ -106,10 +106,6 @@ void engine_stop ( void )
 {
     multi_set_tacho_command_inx( sn_engineLR, TACHO_STOP );
     return;
-}
-
-void engine_stop(uint8_t sn){
-    set_tacho_stop_action
 }
 
 /*Turn by x degrees. Negative value will turn to the left*/
@@ -205,6 +201,7 @@ void turn( int x )
     return;
 }
 /*Open the engine for grabbing the ball*/
+/* 
 void open_ball ( void )
 {
 
@@ -220,7 +217,7 @@ void open_ball ( void )
 
     return;
 }
-
+*/
 /*Close the engine for grabbing the ball*/
 /* 
    void close_ball ( void )
@@ -254,23 +251,4 @@ printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
 return;
 }
 */
-int main ( void ) {
-
-    if ( ev3_init() == -1 ) return ( 1 );
-    engine_init();
-    engine_list();
-    sn_init();
-    //go_straight(2);
-    turn(90);
-    turn(-90);
-    //go_straight(2);
-    //turn(90);
-    //go_straight(2);
-    //turn(90);
-    //go_straight(2);
-    sleep(2);
-    engine_stop();
-
-    return 0;
-}
 
