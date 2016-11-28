@@ -1,3 +1,4 @@
+#include "engine.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "ev3.h"
@@ -50,12 +51,9 @@ int engine_init( void ) {
     sn_engineLRM[3] = DESC_LIMIT;
 
     // Set default value of ramp up/down speed
-    for (int i = 0; i<2; i++) {
-        set_tacho_ramp_up_sp( sn_engineLR[i], 0 ); // TODO: Check this value
-        set_tacho_ramp_down_sp( sn_engineLR[i], 0 ); // TODO: Check this value
-    }
-    set_tacho_ramp_up_sp( sn_engineM, 0 ); // TODO: Check this value
-    set_tacho_ramp_down_sp( sn_engineM, 0 ); // TODO: Check this value
+    multi_set_tacho_ramp_up_sp( sn_engineLRM, 0 ); // TODO: Check this value
+    multi_set_tacho_ramp_down_sp( sn_engineLRM, 0 ); // TODO: Check this value
+    multi_set_tacho_stop_action_inx( sn_engineLRM, TACHO_HOLD );
 
     return 0;
 }
@@ -81,9 +79,7 @@ void engine_list ( void )
 /* Reset tachos */
 void engine_reset ( void )
 {
-    for (int i = 0; i < 3; i++){
-        set_tacho_command_inx( sn_engineLRM[i], TACHO_RESET );
-    }
+    multi_set_tacho_command_inx( sn_engineLRM, TACHO_RESET );
     return;
 }
 
@@ -108,10 +104,12 @@ void go_straight ( int seconds )
 /* Stop the engines */
 void engine_stop ( void )
 {
-    printf( "Stop the engines...\n" );
-    multi_set_tacho_stop_action_inx( sn_engineLR, TACHO_HOLD );
     multi_set_tacho_command_inx( sn_engineLR, TACHO_STOP );
     return;
+}
+
+void engine_stop(uint8_t sn){
+    set_tacho_stop_action
 }
 
 /*Turn by x degrees. Negative value will turn to the left*/
@@ -133,9 +131,6 @@ void turn( int x )
     }
 
     // Passive
-    //int hold_position_passive;
-    //get_tacho_position(sn_passive, &hold_position_passive);
-    ///set_tacho_position_sp(sn_passive, hold_position_passive);
     set_tacho_stop_action_inx( sn_passive, TACHO_HOLD );
     set_tacho_speed_sp( sn_passive, MAX_SPEED/2);
     set_tacho_command_inx( sn_passive, TACHO_STOP );
@@ -200,7 +195,7 @@ void turn( int x )
 
     Sleep(500); 
 
-    // Fix error
+    // TODO: Fix error
     //current_angle = sn_get_gyro_val();
     //int error = target_angle - current_angle;
     //if (error > 1 || error < -1){
@@ -210,38 +205,21 @@ void turn( int x )
     return;
 }
 /*Open the engine for grabbing the ball*/
-/* 
-   void open_ball ( void )
-   {
-   int port;
-   uint8_t sn;
+void open_ball ( void )
+{
 
-   engine_stop();
+    engine_stop();
 
-   port = BALL;
-   if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
-   printf( "LEGO_EV3_M_MOTOR on port %c is found, right...\n",  port);
-   int max_speed;
+    // Front engine
+    get_tacho_max_speed( sn, &max_speed );
+    set_tacho_position_sp( sn, -40);
 
-// Front engine
-get_tacho_max_speed( sn, &max_speed );
-printf( " max speed = %d\n", max_speed );
-set_tacho_speed_sp( sn, - max_speed / 2);
-set_tacho_ramp_up_sp( sn, 0 );
-set_tacho_ramp_down_sp( sn, 0 );
-set_tacho_position_sp( sn, -40);
+    for (int i=0; i<8; i++) {
+        set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS );
+    }
 
-for (int i=0; i<8; i++) {
-set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS );
+    return;
 }
-}
-else {
-printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
-}
-
-return;
-}
-*/
 
 /*Close the engine for grabbing the ball*/
 /* 

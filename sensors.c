@@ -16,16 +16,15 @@
  * =====================================================================================
  */
 
+
+
+#include <sensors.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 #include "ev3.h"
 #include "ev3_port.h"
 #include "ev3_sensor.h"
-
-const char const *color[] = { "?", "BLACK", "BLUE", "GREEN", "YELLOW", "RED", "WHITE", "BROWN" };
-#define COLOR_COUNT  (( int )( sizeof( color ) / sizeof( color[ 0 ])))
 
 uint8_t sn_touch = 0;
 uint8_t sn_color = 0;
