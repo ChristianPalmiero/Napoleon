@@ -16,9 +16,9 @@ const int MAX_SPEED = 500;
 
 uint8_t sn_engineR;
 uint8_t sn_engineL;
-uint8_t sn_engineLR[2];
+uint8_t sn_engineLR[3];
 uint8_t sn_engineM;
-uint8_t sn_engineLRM[3];
+uint8_t sn_engineLRM[4];
 /* Detect connected tachos
    Return the number of found tachos
    */
@@ -42,14 +42,17 @@ int engine_init( void ) {
     } 
     sn_engineLR[0] = sn_engineL;
     sn_engineLR[1] = sn_engineR;
+    sn_engineLR[2] = DESC_LIMIT;
+
     sn_engineLRM[0] = sn_engineL;
     sn_engineLRM[1] = sn_engineR;
     sn_engineLRM[2] = sn_engineM;
+    sn_engineLRM[3] = DESC_LIMIT;
 
     // Set default value of ramp up/down speed
     for (int i = 0; i<2; i++) {
-        set_tacho_ramp_up_sp( sn_engineLR[i], 1000 ); // TODO: Check this value
-        set_tacho_ramp_down_sp( sn_engineLR[i], 1000 ); // TODO: Check this value
+        set_tacho_ramp_up_sp( sn_engineLR[i], 0 ); // TODO: Check this value
+        set_tacho_ramp_down_sp( sn_engineLR[i], 0 ); // TODO: Check this value
     }
     set_tacho_ramp_up_sp( sn_engineM, 0 ); // TODO: Check this value
     set_tacho_ramp_down_sp( sn_engineM, 0 ); // TODO: Check this value
@@ -88,20 +91,16 @@ void engine_reset ( void )
  * Passing 0 as number of seconds means go forever */
 void go_straight ( int seconds )
 {
-    for (int i = 0; i<2; i++){
-        set_tacho_stop_action_inx( sn_engineLR[i], TACHO_BRAKE );
-        set_tacho_polarity_inx( sn_engineLR[i], TACHO_INVERSED);
-        set_tacho_speed_sp( sn_engineLR[i], MAX_SPEED );
-        set_tacho_time_sp( sn_engineLR[i], seconds * 1000 );
-    }
+    multi_set_tacho_stop_action_inx( sn_engineLR, TACHO_BRAKE );
+    multi_set_tacho_polarity_inx( sn_engineLR, TACHO_INVERSED);
+    multi_set_tacho_speed_sp( sn_engineLR, MAX_SPEED );
+    multi_set_tacho_time_sp( sn_engineLR, seconds * 1000 );
 
     if ( seconds > 0 ) {
-        set_tacho_command_inx( sn_engineL, TACHO_RUN_TIMED );
-        set_tacho_command_inx( sn_engineR, TACHO_RUN_TIMED );
+        multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_TIMED );
         sleep(seconds);
     } else {
-        set_tacho_command_inx( sn_engineR, TACHO_RUN_FOREVER );
-        set_tacho_command_inx( sn_engineL, TACHO_RUN_FOREVER );
+        multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_FOREVER );
     }
     return;
 }
@@ -110,10 +109,8 @@ void go_straight ( int seconds )
 void engine_stop ( void )
 {
     printf( "Stop the engines...\n" );
-    for (int i = 0; i < 2; i++){
-        set_tacho_stop_action_inx( sn_engineLR[i], TACHO_HOLD );
-        set_tacho_command_inx( sn_engineLR[i], TACHO_STOP );
-    }
+    multi_set_tacho_stop_action_inx( sn_engineLR, TACHO_HOLD );
+    multi_set_tacho_command_inx( sn_engineLR, TACHO_STOP );
     return;
 }
 
@@ -156,48 +153,51 @@ void turn( int x )
 
     // Gyro control loop
     int deg_left;
+    int stage = 3;
     if ( target_angle > current_angle ){
         while ( current_angle < target_angle ) {
             current_angle = sn_get_gyro_val();
 
             deg_left = target_angle - current_angle;
-            if ( 0 < deg_left && deg_left <= 6 ) {
+            if ( stage == 1 && 0 < deg_left && deg_left <= 6 ) {
                 set_tacho_speed_sp( sn_active, 10);
                 set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-            } else if ( deg_left <= 15 ) {
+                stage--;
+            } else if ( stage == 2 && deg_left <= 15 ) {
                 set_tacho_speed_sp( sn_active, 75);
                 set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-            } else if ( deg_left <= 30 ) {
+                stage--;
+            } else if ( stage == 3 && deg_left <= 30 ) {
                 set_tacho_speed_sp( sn_active, 200);
                 set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+                stage--;
             }
-
-            Sleep(50);
+            Sleep(25);
         }
     } else if ( target_angle < current_angle ) {
         while ( current_angle > target_angle ) {
             current_angle = sn_get_gyro_val();
 
             deg_left = current_angle - target_angle;
-
-            if ( 0 < deg_left && deg_left <= 6 ) {
+            if ( stage == 1 && 0 < deg_left && deg_left <= 6 ) {
                 set_tacho_speed_sp( sn_active, 10);
                 set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-            } else if ( deg_left <= 15 ) {
+                stage--;
+            } else if ( stage == 2 && deg_left <= 15 ) {
                 set_tacho_speed_sp( sn_active, 75);
                 set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-            } else if ( deg_left <= 30 ) {
+                stage--;
+            } else if ( stage == 3 && deg_left <= 30 ) {
                 set_tacho_speed_sp( sn_active, 200);
                 set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+                stage--;
             }
-
-            Sleep(50);
+            Sleep(25);
         }
     }
-
+    // HALT!
     set_tacho_command_inx(sn_active, TACHO_STOP);
 
-    // HALT!
     Sleep(500); 
 
     // Fix error
@@ -282,13 +282,14 @@ int main ( void ) {
     engine_init();
     engine_list();
     sn_init();
-    go_straight(2);
+    //go_straight(2);
     turn(90);
-    go_straight(2);
-    turn(90);
-    go_straight(2);
-    turn(90);
-    go_straight(2);
+    turn(-90);
+    //go_straight(2);
+    //turn(90);
+    //go_straight(2);
+    //turn(90);
+    //go_straight(2);
     sleep(2);
     engine_stop();
 
