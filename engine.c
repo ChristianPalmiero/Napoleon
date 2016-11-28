@@ -4,7 +4,7 @@
 #include "ev3.h"
 #include "ev3_port.h"
 #include "ev3_tacho.h"
-#include "sensors.c"
+#include "sensors.h"
 #include <unistd.h>
 
 #define RIGHT 67
