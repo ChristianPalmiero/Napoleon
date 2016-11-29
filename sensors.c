@@ -33,7 +33,6 @@ uint8_t sn_sonar;
 uint8_t sn_mag;
 uint8_t sn_gyro;
 
-#define SN_NFOUND 255
 
 float value;
 const char *color[] = { "?", "BLACK", "BLUE", "GREEN", "YELLOW", "RED", "WHITE", "BROWN" };
@@ -46,26 +45,26 @@ int sn_init(){
     }
 
     if ( !ev3_search_sensor( LEGO_EV3_COLOR, &sn_color, 0 )) {
-        sn_color = SN_NFOUND;
+        sn_color = DESC_LIMIT;
         printf("WARNING: COLOR sensor not found!\n");
     }
 
     if ( !ev3_search_sensor( HT_NXT_COMPASS, &sn_compass, 0 )) {
-        sn_compass = SN_NFOUND;
+        sn_compass = DESC_LIMIT;
         printf("WARNING: COMPASS not found!\n");
     }
 
     if ( !ev3_search_sensor( LEGO_EV3_GYRO, &sn_gyro, 0 )) {
-        sn_gyro = SN_NFOUND;
+        sn_gyro = DESC_LIMIT;
         printf("WARNING: GYRO not found!\n");
     }
 
     if ( !ev3_search_sensor( LEGO_EV3_US, &sn_sonar, 0 )) {
-        sn_sonar = SN_NFOUND;
+        sn_sonar = DESC_LIMIT;
         printf("WARNING: SONAR not found!\n");
     }
     if ( !ev3_search_sensor( NXT_ANALOG, &sn_mag, 0 )) {
-        sn_mag = SN_NFOUND;
+        sn_mag = DESC_LIMIT;
         printf("WARNING: MAG sensor not found!\n");
     }
 
@@ -102,7 +101,7 @@ void sn_lookup(){
 
 float sn_get_color_val(){
     int val;
-    if ( sn_color != SN_NFOUND) {
+    if ( sn_color != DESC_LIMIT) {
         get_sensor_value( 0, sn_color, &val );
         return val;
     } else {
@@ -113,7 +112,7 @@ float sn_get_color_val(){
 
 
 int sn_color_set_mode(char* mode){
-    if ( sn_color != SN_NFOUND ) {
+    if ( sn_color != DESC_LIMIT ) {
         set_sensor_mode(sn_color, mode);
         return 0;
     } else {
@@ -125,7 +124,7 @@ int sn_color_set_mode(char* mode){
 /*  COMPASS */
 
 float sn_get_compass_val(){
-    if ( sn_compass != SN_NFOUND){
+    if ( sn_compass != DESC_LIMIT){
         get_sensor_value0(sn_compass, &value );
         return value;
     } else {
@@ -137,7 +136,7 @@ float sn_get_compass_val(){
 /*  GYRO */
 
 float sn_get_gyro_val(){
-    if (sn_gyro != SN_NFOUND){
+    if (sn_gyro != DESC_LIMIT){
         get_sensor_value0(sn_gyro, &value );
         return -value; // INVERTED - GYRO IS MOUNTED UPSIDE DOWN!
     } else {
@@ -149,7 +148,7 @@ float sn_get_gyro_val(){
 /* SONAR */
 
 float sn_get_sonar_val(){
-    if (sn_sonar != SN_NFOUND){
+    if (sn_sonar != DESC_LIMIT){
         get_sensor_value0(sn_sonar, &value );
         return value;
     } else {
@@ -160,7 +159,7 @@ float sn_get_sonar_val(){
 
 /*  MAG */
 float sn_get_mag_val(){
-    if (sn_mag != SN_NFOUND){
+    if (sn_mag != DESC_LIMIT){
         get_sensor_value0(sn_mag, &value );
         return value;
     } else {

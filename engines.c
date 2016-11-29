@@ -20,6 +20,7 @@ uint8_t sn_engineL;
 uint8_t sn_engineLR[3];
 uint8_t sn_engineM;
 uint8_t sn_engineLRM[4];
+int position_engineM;
 /* Detect connected tachos
    Return the number of found tachos
    */
@@ -189,7 +190,7 @@ void turn( int x )
     // HALT!
     set_tacho_command_inx(sn_active, TACHO_STOP);
 
-    Sleep(500); 
+    // Sleep(500); 
 
     // TODO: Fix error
     //current_angle = sn_get_gyro_val();
@@ -201,54 +202,22 @@ void turn( int x )
     return;
 }
 /*Open the engine for grabbing the ball*/
-/* 
 void open_ball ( void )
 {
-
-    engine_stop();
-
-    // Front engine
-    get_tacho_max_speed( sn, &max_speed );
-    set_tacho_position_sp( sn, -40);
-
-    for (int i=0; i<8; i++) {
-        set_tacho_command_inx( sn, TACHO_RUN_TO_REL_POS );
-    }
+    set_tacho_command_inx(sn_engineM, TACHO_STOP);
+    set_tacho_position_sp( sn_engineM, -40);
+    set_tacho_command_inx( sn_engineM, TACHO_RUN_TO_REL_POS );
 
     return;
 }
-*/
+
 /*Close the engine for grabbing the ball*/
-/* 
-   void close_ball ( void )
-   {
-   int port;
-   uint8_t sn;
+void close_ball ( void )
+{
+    set_tacho_command_inx(sn_engineM, TACHO_STOP);
+    set_tacho_position_sp(sn_engineM, +40);
+    set_tacho_command_inx(sn_engineM, TACHO_RUN_TO_REL_POS );
 
-   engine_stop();
-
-   port = BALL;
-   if ( ev3_search_tacho_plugged_in( port, 0, &sn, 0 )) {
-   printf( "LEGO_EV3_M_MOTOR on port %c is found, right...\n",  port);
-   int max_speed;
-
-// Front engine
-get_tacho_max_speed( sn, &max_speed );
-printf( " max speed = %d\n", max_speed );
-set_tacho_speed_sp( sn, - max_speed / 3);
-set_tacho_ramp_up_sp( sn, 0 );
-set_tacho_ramp_down_sp( sn, 0 );
-set_tacho_position_sp( sn, +37);
-
-for (int i=0; i<8; i++) {
-set_tacho_command_inx( sn, TACHO_RUN_TO_ABS_POS );
+    return;
 }
-}
-else {
-printf( "LEGO_EV3_M_MOTOR on port %c is NOT found\n", port );
-}
-
-return;
-}
-*/
 
