@@ -12,13 +12,12 @@ int main ( void ) {
     sn_init();
 
     for (int i = 0; i < 1; i++){
-    turn(360,TURN_FORWARD);
+//    turn(360,TURN_FORWARD);
 //    go_straight(5);
-    //turn(90,TURN_FORWARD);
-    //turn(-90,TURN_REVERSE);
-
-    //turn(-90,TURN_FORWARD);
-    //turn(90,TURN_REVERSE);
+  turn(90,TURN_FORWARD);
+  turn(-90,TURN_REVERSE);
+turn(-90,TURN_FORWARD);
+turn(90,TURN_REVERSE);
     }
     ev3_uninit();
 }

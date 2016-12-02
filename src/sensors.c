@@ -57,6 +57,8 @@ int sn_init(){
     if ( !ev3_search_sensor( LEGO_EV3_GYRO, &sn_gyro, 0 )) {
         sn_gyro = DESC_LIMIT;
         printf("WARNING: GYRO not found!\n");
+    } else {
+        sn_gyro_set_mode(LEGO_EV3_GYRO_GYRO_ANG);
     }
 
     if ( !ev3_search_sensor( LEGO_EV3_US, &sn_sonar, 0 )) {
@@ -121,6 +123,16 @@ int sn_color_set_mode(char* mode){
     }
 }
 
+int sn_gyro_set_mode(char* mode){
+    if ( sn_gyro != DESC_LIMIT ) {
+        set_sensor_mode(sn_gyro, mode);
+        return 0;
+    } else {
+        perror("Attempt to set gyro mode of uninitialized gyro sensor! Aborting...\n" );
+        abort();
+    }
+}
+GYRO-ANG
 /*  COMPASS */
 
 float sn_get_compass_val(){
