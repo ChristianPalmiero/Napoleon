@@ -9,7 +9,7 @@ float sn_get_compass_val();
 float sn_get_gyro_val();
 float sn_get_sonar_val();
 float sn_get_mag_val();
-
+int sn_gyro_set_mode();
 //const char *color; 
 
 #endif

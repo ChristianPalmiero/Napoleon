@@ -38,9 +38,9 @@ float value;
 const char *color[] = { "?", "BLACK", "BLUE", "GREEN", "YELLOW", "RED", "WHITE", "BROWN" };
 int sn_init(){
 
-    printf("Initializing sensors...");
+    printf("Initializing sensors...\n");
     if (!ev3_sensor_init()) {
-        perror("ev3_sensor_init() failed!. Aborting....");
+        perror("ev3_sensor_init() failed!. Aborting....\n");
         abort();
     }
 
@@ -58,7 +58,7 @@ int sn_init(){
         sn_gyro = DESC_LIMIT;
         printf("WARNING: GYRO not found!\n");
     } else {
-        sn_gyro_set_mode(LEGO_EV3_GYRO_GYRO_ANG);
+        sn_gyro_set_mode("GYRO-ANG");
     }
 
     if ( !ev3_search_sensor( LEGO_EV3_US, &sn_sonar, 0 )) {
@@ -132,7 +132,6 @@ int sn_gyro_set_mode(char* mode){
         abort();
     }
 }
-GYRO-ANG
 /*  COMPASS */
 
 float sn_get_compass_val(){
@@ -175,7 +174,7 @@ float sn_get_mag_val(){
         get_sensor_value0(sn_mag, &value );
         return value;
     } else {
-        printf("Attempt to read uninitialized MAG! Aborting...");
+        printf("Attempt to read uninitialized MAG! Aborting...i\n");
         abort();
     }
 }

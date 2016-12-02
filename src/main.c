@@ -2,8 +2,8 @@
 #include "ev3.h"
 #include "sensors.h"
 #include "engines.h"
-
-
+#include "position.h"
+#include <unistd.h>
 int main ( void ) {
 
     if ( ev3_init() == -1 ) return ( 1 );
@@ -12,12 +12,10 @@ int main ( void ) {
     sn_init();
 
     for (int i = 0; i < 1; i++){
-//    turn(360,TURN_FORWARD);
-//    go_straight(5);
-  turn(90,TURN_FORWARD);
-  turn(-90,TURN_REVERSE);
-turn(-90,TURN_FORWARD);
-turn(90,TURN_REVERSE);
+    
+        position_start();
+        sleep(2);
+        position_stop();
     }
     ev3_uninit();
 }
