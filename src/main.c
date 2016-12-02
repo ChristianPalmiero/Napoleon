@@ -14,7 +14,7 @@ int main ( void ) {
     for (int i = 0; i < 1; i++){
     
         position_start();
-        sleep(2);
+        sleep(3);
         position_stop();
     }
     ev3_uninit();
