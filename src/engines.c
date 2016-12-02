@@ -152,83 +152,83 @@ void turn( int x , int direction)
     } else  if ( x < 0 && direction == TURN_REVERSE ) {
         sn_active  = sn_engineL;
         sn_passive = sn_engineR;
-        set_tacho_polarity_inx( sn_active, TACHO_NORMAL;
-                } else {
-                return;
-                }
+        set_tacho_polarity_inx( sn_active, TACHO_NORMAL);
+    } else {
+        return;
+    }
 
-                // Passive
-                set_tacho_stop_action_inx( sn_passive, TACHO_HOLD );
-                set_tacho_speed_sp( sn_passive, MAX_SPEED);
-                set_tacho_command_inx( sn_passive, TACHO_STOP );
+    // Passive
+    set_tacho_stop_action_inx( sn_passive, TACHO_HOLD );
+    set_tacho_speed_sp( sn_passive, MAX_SPEED);
+    set_tacho_command_inx( sn_passive, TACHO_STOP );
 
-                // Active
-                set_tacho_speed_sp( sn_active, MAX_SPEED);
-                set_tacho_stop_action_inx( sn_active, TACHO_HOLD );
+    // Active
+    set_tacho_speed_sp( sn_active, MAX_SPEED);
+    set_tacho_stop_action_inx( sn_active, TACHO_HOLD );
 
-                int current_angle = sn_get_gyro_val();
-                int target_angle = current_angle + x;
+    int current_angle = sn_get_gyro_val();
+    int target_angle = current_angle + x;
 
-                // Start the active engine
+    // Start the active engine
+    set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+
+    // Gyro control loop
+    int deg_left;
+    int stage = 3;
+    if ( target_angle > current_angle ){
+        while ( current_angle < target_angle ) {
+            current_angle = sn_get_gyro_val();
+
+            deg_left = target_angle - current_angle;
+            if ( stage == 1 && 0 < deg_left && deg_left <= 6 ) {
+                set_tacho_speed_sp( sn_active, 10);
                 set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+                stage--;
+            } else if ( stage == 2 && deg_left <= 15 ) {
+                set_tacho_speed_sp( sn_active, 75);
+                set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+                stage--;
+            } else if ( stage == 3 && deg_left <= 30 ) {
+                set_tacho_speed_sp( sn_active, 200);
+                set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+                stage--;
+            }
+            Sleep(25);
+        }
+    } else if ( target_angle < current_angle ) {
+        while ( current_angle > target_angle ) {
+            current_angle = sn_get_gyro_val();
 
-                // Gyro control loop
-                int deg_left;
-                int stage = 3;
-                if ( target_angle > current_angle ){
-                    while ( current_angle < target_angle ) {
-                        current_angle = sn_get_gyro_val();
+            deg_left = current_angle - target_angle;
+            if ( stage == 1 && 0 < deg_left && deg_left <= 6 ) {
+                set_tacho_speed_sp( sn_active, 10);
+                set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+                stage--;
+            } else if ( stage == 2 && deg_left <= 15 ) {
+                set_tacho_speed_sp( sn_active, 75);
+                set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+                stage--;
+            } else if ( stage == 3 && deg_left <= 30 ) {
+                set_tacho_speed_sp( sn_active, 200);
+                set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+                stage--;
+            }
+            Sleep(25);
+        }
+    }
+    // HALT!
+    set_tacho_command_inx(sn_active, TACHO_STOP);
 
-                        deg_left = target_angle - current_angle;
-                        if ( stage == 1 && 0 < deg_left && deg_left <= 6 ) {
-                            set_tacho_speed_sp( sn_active, 10);
-                            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                            stage--;
-                        } else if ( stage == 2 && deg_left <= 15 ) {
-                            set_tacho_speed_sp( sn_active, 75);
-                            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                            stage--;
-                        } else if ( stage == 3 && deg_left <= 30 ) {
-                            set_tacho_speed_sp( sn_active, 200);
-                            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                            stage--;
-                        }
-                        Sleep(25);
-                    }
-                } else if ( target_angle < current_angle ) {
-                    while ( current_angle > target_angle ) {
-                        current_angle = sn_get_gyro_val();
+    // Sleep(500); 
 
-                        deg_left = current_angle - target_angle;
-                        if ( stage == 1 && 0 < deg_left && deg_left <= 6 ) {
-                            set_tacho_speed_sp( sn_active, 10);
-                            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                            stage--;
-                        } else if ( stage == 2 && deg_left <= 15 ) {
-                            set_tacho_speed_sp( sn_active, 75);
-                            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                            stage--;
-                        } else if ( stage == 3 && deg_left <= 30 ) {
-                            set_tacho_speed_sp( sn_active, 200);
-                            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                            stage--;
-                        }
-                        Sleep(25);
-                    }
-                }
-                // HALT!
-                set_tacho_command_inx(sn_active, TACHO_STOP);
+    // TODO: Fix error
+    //current_angle = sn_get_gyro_val();
+    //int error = target_angle - current_angle;
+    //if (error > 1 || error < -1){
+    //    turn(error);
+    //}
 
-                // Sleep(500); 
-
-                // TODO: Fix error
-                //current_angle = sn_get_gyro_val();
-                //int error = target_angle - current_angle;
-                //if (error > 1 || error < -1){
-                //    turn(error);
-                //}
-
-                return;
+    return;
 }
 /*Open the engine for grabbing the ball*/
 void open_ball ( void )
