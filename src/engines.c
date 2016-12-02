@@ -6,7 +6,8 @@
 #include "ev3_tacho.h"
 #include "sensors.h"
 #include <unistd.h>
-
+#include <time.h>
+#include <math.h>
 #define RIGHT 67
 #define LEFT 68
 #define BALL 65
@@ -88,6 +89,7 @@ void engine_reset ( void )
  * Passing 0 as number of seconds means go forever */
 void go_straight ( int seconds )
 {
+    int sleep_time = 100; // [ms]
     multi_set_tacho_stop_action_inx( sn_engineLR, TACHO_BRAKE );
     multi_set_tacho_polarity_inx( sn_engineLR, TACHO_INVERSED);
     multi_set_tacho_speed_sp( sn_engineLR, MAX_SPEED );
@@ -104,18 +106,15 @@ void go_straight ( int seconds )
         while (mseconds > 0){
             current_angle = sn_get_gyro_val();
             error = current_angle-initial_angle;
-            if (error > 1 || error < 1) {
-                set_tacho_speed_sp(sn_engineR, MAX_SPEED-(error*10));
-                set_tacho_speed_sp(sn_engineL, MAX_SPEED+(error*10));
+            if (error > 1 || error < -1) {
+                set_tacho_speed_sp(sn_engineR, MAX_SPEED+(error*3));
+                set_tacho_speed_sp(sn_engineL, MAX_SPEED-(error*3));
                 multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_TIMED ); // TODO: FIX TIMED!
-            }        
-
-
+            }
+            mseconds-=sleep_time;
+            Sleep(sleep_time);        
         }
-
-
-
-        sleep(seconds);
+        multi_set_tacho_command_inx( sn_engineLR, TACHO_STOP );
     } else {
         multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_FOREVER );
     }
@@ -173,53 +172,35 @@ void turn( int x , int direction)
     set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
 
     // Gyro control loop
-    int deg_left;
+    int deg_left = target_angle - current_angle;
+    int deg_left_abs = abs(deg_left);
     int stage = 3;
-    if ( target_angle > current_angle ){
-        while ( current_angle < target_angle ) {
-            current_angle = sn_get_gyro_val();
+    while ( (deg_left > 0 && x > 0 ) || ((deg_left < 0) && x < 0)) {
+        current_angle = sn_get_gyro_val();
+        deg_left = target_angle - current_angle;
+        deg_left_abs = abs(deg_left);
 
-            deg_left = target_angle - current_angle;
-            if ( stage == 1 && 0 < deg_left && deg_left <= 6 ) {
-                set_tacho_speed_sp( sn_active, 10);
-                set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                stage--;
-            } else if ( stage == 2 && deg_left <= 15 ) {
-                set_tacho_speed_sp( sn_active, 75);
-                set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                stage--;
-            } else if ( stage == 3 && deg_left <= 30 ) {
-                set_tacho_speed_sp( sn_active, 200);
-                set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                stage--;
-            }
-            Sleep(25);
+        printf("T: %d C: %d Deg_Left: %d\n",target_angle,current_angle,deg_left);
+        
+        if ( stage == 1 && 0 < deg_left_abs && deg_left_abs <= 6 ) {
+            set_tacho_speed_sp( sn_active, 20);
+            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+            stage--;
+        } else if ( stage == 2 && deg_left_abs <= 15 ) {
+            set_tacho_speed_sp( sn_active, 75);
+            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+            stage--;
+        } else if ( stage == 3 && deg_left_abs <= 30 ) {
+            set_tacho_speed_sp( sn_active, 200);
+            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
+            stage--;
         }
-    } else if ( target_angle < current_angle ) {
-        while ( current_angle > target_angle ) {
-            current_angle = sn_get_gyro_val();
-
-            deg_left = current_angle - target_angle;
-            if ( stage == 1 && 0 < deg_left && deg_left <= 6 ) {
-                set_tacho_speed_sp( sn_active, 10);
-                set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                stage--;
-            } else if ( stage == 2 && deg_left <= 15 ) {
-                set_tacho_speed_sp( sn_active, 75);
-                set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                stage--;
-            } else if ( stage == 3 && deg_left <= 30 ) {
-                set_tacho_speed_sp( sn_active, 200);
-                set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-                stage--;
-            }
-            Sleep(25);
-        }
+        Sleep(50);
     }
     // HALT!
     set_tacho_command_inx(sn_active, TACHO_STOP);
-
-    // Sleep(500); 
+    set_tacho_command_inx(sn_passive, TACHO_STOP);
+    Sleep(500); 
 
     // TODO: Fix error
     //current_angle = sn_get_gyro_val();
