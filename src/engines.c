@@ -8,8 +8,8 @@
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
-#define RIGHT 67
-#define LEFT 68
+#define RIGHT 68
+#define LEFT 67
 #define BALL 65
 const int MAX_SPEED = 500; 
 
@@ -91,7 +91,7 @@ void go_straight ( int seconds )
 {
     int sleep_time = 100; // [ms]
     multi_set_tacho_stop_action_inx( sn_engineLR, TACHO_BRAKE );
-    multi_set_tacho_polarity_inx( sn_engineLR, TACHO_INVERSED);
+    multi_set_tacho_polarity_inx( sn_engineLR, TACHO_NORMAL);
     multi_set_tacho_speed_sp( sn_engineLR, MAX_SPEED );
     multi_set_tacho_time_sp( sn_engineLR, seconds * 1000 );
 
@@ -139,19 +139,19 @@ void turn( int x , int direction)
     if ( x > 0 && direction == TURN_FORWARD) {
         sn_active  = sn_engineL;
         sn_passive = sn_engineR;
-        set_tacho_polarity_inx( sn_active, TACHO_INVERSED);
+        set_tacho_polarity_inx( sn_active, TACHO_NORMAL);
     } else if ( x < 0 && direction == TURN_FORWARD) {
         sn_active  = sn_engineR;
         sn_passive = sn_engineL;
-        set_tacho_polarity_inx( sn_active, TACHO_INVERSED);
+        set_tacho_polarity_inx( sn_active, TACHO_NORMAL);
     } else  if ( x > 0 && direction == TURN_REVERSE ) {
         sn_active  = sn_engineR;
         sn_passive = sn_engineL;
-        set_tacho_polarity_inx( sn_active, TACHO_NORMAL);
+        set_tacho_polarity_inx( sn_active, TACHO_INVERSED);
     } else  if ( x < 0 && direction == TURN_REVERSE ) {
         sn_active  = sn_engineL;
         sn_passive = sn_engineR;
-        set_tacho_polarity_inx( sn_active, TACHO_NORMAL);
+        set_tacho_polarity_inx( sn_active, TACHO_INVERSED);
     } else {
         return;
     }
@@ -180,7 +180,7 @@ void turn( int x , int direction)
         deg_left = target_angle - current_angle;
         deg_left_abs = abs(deg_left);
 
-        printf("T: %d C: %d Deg_Left: %d\n",target_angle,current_angle,deg_left);
+        //printf("T: %d C: %d Deg_Left: %d\n",target_angle,current_angle,deg_left);
         
         if ( stage == 1 && 0 < deg_left_abs && deg_left_abs <= 6 ) {
             set_tacho_speed_sp( sn_active, 20);
@@ -230,4 +230,12 @@ void close_ball ( void )
 
     return;
 }
+
+
+void get_encoders_values(int * disp_left, int * disp_right){
+        get_tacho_position(sn_engineL, disp_left);
+        get_tacho_position(sn_engineR, disp_right);
+}
+
+
 
