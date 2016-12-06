@@ -56,8 +56,8 @@ void * update_position(){
 
         // CALCULATE NEW X,Y
 
-        POS_X += displacement*cos(angle*M_PI/180.0);
-        POS_Y += displacement*sin(angle*M_PI/180.0);
+        POS_X += displacement*sin(angle*M_PI/180.0);
+        POS_Y += displacement*cos(angle*M_PI/180.0);
 
         printf("Position thread: \n");
         printf("LEFT \tOLD: %d\t NEW: %d\t DISP: %d\n", ticks_left_prev, ticks_left, diff_left);

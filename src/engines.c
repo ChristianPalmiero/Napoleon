@@ -53,8 +53,10 @@ int engine_init( void ) {
     sn_engineLRM[3] = DESC_LIMIT;
 
     // Set default value of ramp up/down speed
-    multi_set_tacho_ramp_up_sp( sn_engineLRM, 1000 ); // TODO: Check this value
-    multi_set_tacho_ramp_down_sp( sn_engineLRM, 0 ); // TODO: Check this value
+    multi_set_tacho_ramp_up_sp( sn_engineLR, 1000 ); // TODO: Check this value
+    multi_set_tacho_ramp_down_sp( sn_engineLR, 0 ); // TODO: Check this value
+    set_tacho_ramp_up_sp(sn_engineM, 1000);
+    set_tacho_ramp_down_sp(sn_engineM, 1000);
     multi_set_tacho_stop_action_inx( sn_engineLRM, TACHO_HOLD );
 
     return 0;
@@ -214,6 +216,7 @@ void turn( int x , int direction)
 /*Open the engine for grabbing the ball*/
 void open_ball ( void )
 {
+    set_tacho_speed_sp(sn_engineM, 100);
     set_tacho_command_inx(sn_engineM, TACHO_STOP);
     set_tacho_position_sp( sn_engineM, -40);
     set_tacho_command_inx( sn_engineM, TACHO_RUN_TO_REL_POS );
@@ -224,6 +227,8 @@ void open_ball ( void )
 /*Close the engine for grabbing the ball*/
 void close_ball ( void )
 {
+    set_tacho_ramp_up_sp(sn_engineM, 0);
+    set_tacho_speed_sp(sn_engineM, 1000);
     set_tacho_command_inx(sn_engineM, TACHO_STOP);
     set_tacho_position_sp(sn_engineM, +40);
     set_tacho_command_inx(sn_engineM, TACHO_RUN_TO_REL_POS );
