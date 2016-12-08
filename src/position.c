@@ -39,7 +39,7 @@ void * update_position(){
     float angle_prev = 0.0;
 
     // Get initial values
-    
+
     get_encoders_values(&ticks_left_prev,&ticks_right_prev);
     angle_prev = sn_get_gyro_val();
 
@@ -49,7 +49,7 @@ void * update_position(){
         diff_left  = (ticks_left - ticks_left_prev);
         diff_right = (ticks_right -ticks_right_prev);
         displacement = (diff_left+diff_right) * ENCODER_SCALE_FACTOR / 2.0;
-        
+
         angle = sn_get_gyro_val();
         rotation = angle-angle_prev;
         HEADING += rotation;
@@ -88,7 +88,25 @@ void position_stop(){
     printf("Done\n");
 }
 
+void get_dist_and_ang(float xa, float ya, float xb, float yb, float heading, float * out_dist, float * out_rotation){
+    float x = xb-xa;
+    float y = yb-ya;
+    float angle = atan2(y,x)*180.0/M_PI;
 
+    // TODO: CHECK THIS UNWRAPING
+    heading = heading % 360;
+
+    float rotation = angle-(90-heading);
+
+    if (rotation > 180){
+        rotation = -360+(rotation);
+    } else if ( rotation < -180 ) {
+        rotation = 360+*rotation;
+    }
+
+    *out_rotation = rotation;
+    *out_dist = sqrt( (x*x) + (y*y));
+}
 
 
 
