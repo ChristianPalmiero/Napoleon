@@ -16,9 +16,11 @@ int update_interval = 100; // [ms]
 #define  WHEEL_DIAMETER 5.6 
 #define  TICKS_PER_REVOLUTION 360.0
 const float ENCODER_SCALE_FACTOR = M_PI * WHEEL_DIAMETER / TICKS_PER_REVOLUTION;
+
+// TODO: Add mutex!
 float POS_X;
 float POS_Y;
-float HEADING = 0.0;
+int HEADING = 0;
 
 pthread_t position_tid;
 bool position_terminate = false;
@@ -32,11 +34,10 @@ void * update_position(){
     int ticks_right;
     int diff_left;
     int diff_right;
-
+    int rotation = 0;
+    int angle = 0;
+    int angle_prev = 0;
     float displacement;
-    float rotation = 0.0;
-    float angle = 0.0;
-    float angle_prev = 0.0;
 
     // Get initial values
 
@@ -88,7 +89,7 @@ void position_stop(){
     printf("Done\n");
 }
 
-void get_dist_and_ang(float xa, float ya, float xb, float yb, float heading, float * out_dist, float * out_rotation){
+void get_dist_and_ang(float xa, float ya, float xb, float yb, int heading, float * out_dist, int * out_rotation){
     float x = xb-xa;
     float y = yb-ya;
     float angle = atan2(y,x)*180.0/M_PI;
@@ -96,17 +97,21 @@ void get_dist_and_ang(float xa, float ya, float xb, float yb, float heading, flo
     // TODO: CHECK THIS UNWRAPING
     heading = heading % 360;
 
-    float rotation = angle-(90-heading);
+    int rotation = ((int)roundf(angle))-(90-heading);
 
     if (rotation > 180){
         rotation = -360+(rotation);
     } else if ( rotation < -180 ) {
         rotation = 360+*rotation;
-    }
+    }roundf()
 
     *out_rotation = rotation;
     *out_dist = sqrt( (x*x) + (y*y));
 }
 
-
-
+void get_position_and_heading(float * x, float *y, int * heading){
+    // TODO: Add mutex!
+    *x = POS_X;
+    *y = POS_Y;
+    *heading = HEADING;
+}

@@ -109,8 +109,8 @@ void go_straight ( int seconds )
             current_angle = sn_get_gyro_val();
             error = current_angle-initial_angle;
             if (error > 1 || error < -1) {
-                set_tacho_speed_sp(sn_engineR, MAX_SPEED+(error*3));
-                set_tacho_speed_sp(sn_engineL, MAX_SPEED-(error*3));
+                set_tacho_speed_sp(sn_engineR, MAX_SPEED+(error*2));
+                set_tacho_speed_sp(sn_engineL, MAX_SPEED-(error*2));
                 multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_TIMED ); // TODO: FIX TIMED!
             }
             mseconds-=sleep_time;
@@ -139,20 +139,20 @@ void turn( int x , int direction)
     uint8_t sn_passive;
 
     if ( x > 0 && direction == TURN_FORWARD) {
-        sn_active  = sn_engineL;
-        sn_passive = sn_engineR;
+        sn_active  = sn_engineR;
+        sn_passive = sn_engineL;
         set_tacho_polarity_inx( sn_active, TACHO_NORMAL);
     } else if ( x < 0 && direction == TURN_FORWARD) {
-        sn_active  = sn_engineR;
-        sn_passive = sn_engineL;
-        set_tacho_polarity_inx( sn_active, TACHO_NORMAL);
-    } else  if ( x > 0 && direction == TURN_REVERSE ) {
-        sn_active  = sn_engineR;
-        sn_passive = sn_engineL;
-        set_tacho_polarity_inx( sn_active, TACHO_INVERSED);
-    } else  if ( x < 0 && direction == TURN_REVERSE ) {
         sn_active  = sn_engineL;
         sn_passive = sn_engineR;
+        set_tacho_polarity_inx( sn_active, TACHO_NORMAL);
+    } else  if ( x > 0 && direction == TURN_REVERSE ) {
+        sn_active  = sn_engineL;
+        sn_passive = sn_engineR;
+        set_tacho_polarity_inx( sn_active, TACHO_INVERSED);
+    } else  if ( x < 0 && direction == TURN_REVERSE ) {
+        sn_active  = sn_engineR;
+        sn_passive = sn_engineL;
         set_tacho_polarity_inx( sn_active, TACHO_INVERSED);
     } else {
         return;
@@ -177,7 +177,7 @@ void turn( int x , int direction)
     int deg_left = target_angle - current_angle;
     int deg_left_abs = abs(deg_left);
     int stage = 3;
-    while ( (deg_left > 0 && x > 0 ) || ((deg_left < 0) && x < 0)) {
+    while ( (deg_left > 0 && x > 0 ) || ((deg_left < 0) && x < 0)) { // TODO: Check gyro value +/-
         current_angle = sn_get_gyro_val();
         deg_left = target_angle - current_angle;
         deg_left_abs = abs(deg_left);
@@ -243,4 +243,31 @@ void get_encoders_values(int * disp_left, int * disp_right){
 }
 
 
+void go_to_XY(float xb, float yb){
+    // Get current positions
+    float xa, ya, distance;
+    int heading, rotation, heading_error;
 
+    // PHASE 1 - Orient toward the destination
+    get_position_and_heading(&xa,&ya, &heading);
+    get_dist_and_ang(xa,ya,xb,yb,&heading,&rotation);
+    turn(rotation);
+
+    // PHASE 2 - Go to destination
+    multi_set_tacho_speed_sp( sn_engineLR, MAX_SPEED);
+    multi_set_tacho_command_inx(sn_engineLR, TACHO_RUN_FOREVER);
+    Sleep(250);
+    // PHASE 3 - Error correction
+    while ( distance >= 5.0 ){
+        get_position_and_heading(&xa,&ya, &heading);
+        get_dist_and_ang(xa,ya,xb,yb,&heading,&rotation);
+
+        if ( rotation > 1 || rotation < -1 ){
+            set_tacho_speed_sp(sn_engineR, MAX_SPEED+(rotation*2));
+            set_tacho_speed_sp(sn_engineL, MAX_SPEED-(rotation*2));
+            multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_FOREVER );
+        }
+        Sleep(250);
+    }
+    engine_stop();
+}
