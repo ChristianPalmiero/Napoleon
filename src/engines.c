@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
+#include "position.h"
 #define RIGHT 68
 #define LEFT 67
 #define BALL 65
@@ -246,12 +247,12 @@ void get_encoders_values(int * disp_left, int * disp_right){
 void go_to_XY(float xb, float yb){
     // Get current positions
     float xa, ya, distance;
-    int heading, rotation, heading_error;
+    int heading, rotation;
 
     // PHASE 1 - Orient toward the destination
     get_position_and_heading(&xa,&ya, &heading);
-    get_dist_and_ang(xa,ya,xb,yb,&heading,&rotation);
-    turn(rotation);
+    get_dist_and_ang(xa,ya,xb,yb,heading,&distance,&rotation);
+    turn(rotation,TURN_FORWARD);
 
     // PHASE 2 - Go to destination
     multi_set_tacho_speed_sp( sn_engineLR, MAX_SPEED);
@@ -260,7 +261,7 @@ void go_to_XY(float xb, float yb){
     // PHASE 3 - Error correction
     while ( distance >= 5.0 ){
         get_position_and_heading(&xa,&ya, &heading);
-        get_dist_and_ang(xa,ya,xb,yb,&heading,&rotation);
+        get_dist_and_ang(xa,ya,xb,yb,heading,&distance,&rotation);
 
         if ( rotation > 1 || rotation < -1 ){
             set_tacho_speed_sp(sn_engineR, MAX_SPEED+(rotation*2));

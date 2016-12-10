@@ -22,7 +22,7 @@ int main ( void ) {
     engine_init();
     engine_list();
     sn_init();
-//    position_start();
+//    position_start(0.0,0.0);
     eye_start();
     go_straight(7);
     turn(90,TURN_REVERSE);

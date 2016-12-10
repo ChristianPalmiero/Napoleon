@@ -17,12 +17,12 @@ int update_interval = 100; // [ms]
 #define  TICKS_PER_REVOLUTION 360.0
 const float ENCODER_SCALE_FACTOR = M_PI * WHEEL_DIAMETER / TICKS_PER_REVOLUTION;
 
-// TODO: Add mutex!
-float POS_X;
-float POS_Y;
+float POS_X = 0.0;
+float POS_Y = 0.0;
 int HEADING = 0;
 
 pthread_t position_tid;
+pthread_mutex_t position_mutex;
 bool position_terminate = false;
 
 
@@ -53,17 +53,18 @@ void * update_position(){
 
         angle = sn_get_gyro_val();
         rotation = angle-angle_prev;
-        HEADING += rotation;
 
         // CALCULATE NEW X,Y
-
+        pthread_mutex_lock(&position_mutex);
+        HEADING += rotation;
         POS_X += displacement*sin(angle*M_PI/180.0);
         POS_Y += displacement*cos(angle*M_PI/180.0);
+        pthread_mutex_unlock(&position_mutex);
 
         printf("Position thread: \n");
         printf("LEFT \tOLD: %d\t NEW: %d\t DISP: %d\n", ticks_left_prev, ticks_left, diff_left);
         printf("RIGHT \tOLD: %d\t NEW: %d\t DISP: %d\n", ticks_right_prev, ticks_right, diff_right);
-        printf("ANGLE: \t %.0f \t DISPLACEMENT: %.02f\n", angle, displacement);
+        printf("ANGLE: \t %d \t DISPLACEMENT: %.02f\n", angle, displacement);
         printf("X:\t %.2f \t Y: \t %.2f\n",POS_X,POS_Y); 
 
         ticks_left_prev = ticks_left;
@@ -73,9 +74,11 @@ void * update_position(){
     return NULL;
 }
 
-void position_start(){
-    POS_X = 0;
-    POS_Y = 0;
+void position_start(float x_start, float y_start){
+    pthread_mutex_lock(&position_mutex);
+    POS_X = x_start;
+    POS_Y = y_start;
+    pthread_mutex_unlock(&position_mutex);
 
     printf("Creating position tracking threat... ");
     pthread_create(&position_tid, NULL, update_position, NULL);
@@ -100,18 +103,19 @@ void get_dist_and_ang(float xa, float ya, float xb, float yb, int heading, float
     int rotation = ((int)roundf(angle))-(90-heading);
 
     if (rotation > 180){
-        rotation = -360+(rotation);
+        rotation -= 360;
     } else if ( rotation < -180 ) {
-        rotation = 360+*rotation;
-    }roundf()
+        rotation += 360;
+    }
 
     *out_rotation = rotation;
     *out_dist = sqrt( (x*x) + (y*y));
 }
 
 void get_position_and_heading(float * x, float *y, int * heading){
-    // TODO: Add mutex!
+    pthread_mutex_lock(&position_mutex);
     *x = POS_X;
     *y = POS_Y;
     *heading = HEADING;
+    pthread_mutex_unlock(&position_mutex);
 }
