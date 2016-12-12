@@ -33,7 +33,7 @@ uint8_t sn_sonar;
 uint8_t sn_mag;
 uint8_t sn_gyro;
 
-
+#define Sleep( msec ) usleep(( msec ) * 1000 ) 
 float value;
 const char *color[] = { "?", "BLACK", "BLUE", "GREEN", "YELLOW", "RED", "WHITE", "BROWN" };
 int sn_init(){
@@ -47,6 +47,8 @@ int sn_init(){
     if ( !ev3_search_sensor( LEGO_EV3_COLOR, &sn_color, 0 )) {
         sn_color = DESC_LIMIT;
         printf("WARNING: COLOR sensor not found!\n");
+    } else {
+        sn_color_set_mode("COL-COLOR");
     }
 
     if ( !ev3_search_sensor( HT_NXT_COMPASS, &sn_compass, 0 )) {
@@ -58,7 +60,11 @@ int sn_init(){
         sn_gyro = DESC_LIMIT;
         printf("WARNING: GYRO not found!\n");
     } else {
+        // Calibrate GYRO
+        sn_gyro_set_mode("GYRO-CAL");
+        Sleep(200);
         sn_gyro_set_mode("GYRO-ANG");
+        Sleep(200);
     }
 
     if ( !ev3_search_sensor( LEGO_EV3_US, &sn_sonar, 0 )) {
@@ -101,7 +107,7 @@ void sn_lookup(){
 
 /*  COLOR SENSOR */
 
-float sn_get_color_val(){
+int sn_get_color_val(){
     int val;
     if ( sn_color != DESC_LIMIT) {
         get_sensor_value( 0, sn_color, &val );
@@ -149,7 +155,7 @@ float sn_get_compass_val(){
 float sn_get_gyro_val(){
     if (sn_gyro != DESC_LIMIT){
         get_sensor_value0(sn_gyro, &value );
-        return -value; // INVERTED - GYRO IS MOUNTED UPSIDE DOWN!
+        return value; 
     } else {
         printf("Attempt to read uninitialized GYRO! Aborting...\n");
         abort();
