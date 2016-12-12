@@ -15,13 +15,13 @@ void intHandler() {
 
 
 void test1(){
-    position_start(100.0,0.0);
+    position_start(100.0,19.0);
     go_to_XY(100.0, 175.0);
 }
 void test2(){
-    position_start(100.0,10.0);
-    go_to_XY(100.0, 90.0);
-    go_to_XY(90.0, 90.0);
+    position_start(100.0,19.0);
+    go_to_XY(100.0, 81.0);
+    go_to_XY(80.0, 81.0);
 }
 void test3(){
 
@@ -44,7 +44,6 @@ int main ( void ) {
     sn_init();
     //position_start(0.0,0.0);
     //eye_start();
-
     test2();
 
     position_stop();
