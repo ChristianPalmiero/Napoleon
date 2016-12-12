@@ -270,7 +270,8 @@ void turn2( int x)
         Sleep(50);
     }
     // HALT!
-    multi_set_tacho_command_inx(sn_engineLR, TACHO_STOP);
+    multi_set_tacho_polarity_inx( sn_engineLR, TACHO_NORMAL);
+    multi_set_tacho_command_inx( sn_engineLR, TACHO_STOP);
     Sleep(500); 
 
     return;
@@ -279,7 +280,7 @@ void turn2( int x)
 /*Open the engine for grabbing the ball*/
 void open_ball ( void )
 {
-    set_tacho_speed_sp(sn_engineM, 100);
+    set_tacho_speed_sp(sn_engineM, 1000);
     set_tacho_command_inx(sn_engineM, TACHO_STOP);
     set_tacho_position_sp( sn_engineM, -40);
     set_tacho_command_inx( sn_engineM, TACHO_RUN_TO_REL_POS );
@@ -315,26 +316,27 @@ void go_to_XY(float xb, float yb){
     get_position_and_heading(&xa,&ya, &heading);
     get_dist_and_ang(xa,ya,xb,yb,heading,&distance,&rotation);
     printf("GO_TO_XY: Distance: %.2f Rotation: %d\n", distance, rotation);
-    turn(rotation, TURN_FORWARD);
+    turn2(rotation);
 
     // PHASE 2 - Go to destination
     multi_set_tacho_speed_sp( sn_engineLR, MAX_SPEED);
     multi_set_tacho_command_inx(sn_engineLR, TACHO_RUN_FOREVER);
     Sleep(100);
     /// PHASE 3 - Error correction
-    while ( distance >= 5.0 ){
+    while ( distance >= 10.0 ){
         get_position_and_heading(&xa,&ya, &heading);
         get_dist_and_ang(xa,ya,xb,yb,heading,&distance,&rotation);
         printf("GO_TO_XY: Distance: %.2f Rotation: %d\n", distance, rotation);
 
         if (rotation > 20 || rotation < -20){
-            turn(rotation,TURN_FORWARD);
+            turn2(rotation);
         } else if ( rotation > 1 || rotation < -1 ){
             set_tacho_speed_sp(sn_engineR, MAX_SPEED+(rotation*1));
             set_tacho_speed_sp(sn_engineL, MAX_SPEED-(rotation*1));
             multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_FOREVER );
         }
-        Sleep(100);
+       
+	Sleep(100);
     }
     engine_stop();
 }

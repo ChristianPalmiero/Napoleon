@@ -13,24 +13,56 @@ void intHandler() {
     exit(0);
 }
 
-
 void test1(){
     position_start(100.0,19.0);
-    go_to_XY(100.0, 175.0);
+    go_to_XY(100.0, 177.0);
+    position_stop();
 }
+
 void test2(){
     position_start(100.0,19.0);
-    go_to_XY(100.0, 81.0);
-    go_to_XY(80.0, 81.0);
+    go_to_XY(100.0, 98.0);
+    go_to_XY(74.0, 98.0);
+    sleep(2);
+    open_ball();
+    position_stop();    
 }
+
 void test3(){
-
+    position_start(100.0, 19.0);
+    //1 m forward
+    go_to_XY(100.0, 119.0);
+    //70 cm to the left
+    go_to_XY(30.0, 119.0);
+    //90 cm forward
+    go_to_XY(30.0, 209.0);
+    //65 cm to the right
+    go_to_XY(95.0, 209.0);
+    //1.73 m forward
+    go_to_XY(95.0, 382.0);
+    position_stop();
 }
+
 void test4(){
-
+    position_start(100.0, 19.0);
+    //1 m forward
+    go_to_XY(100.0, 119.0);
+    //75 cm to the left
+    go_to_XY(25.0, 119.0);
+    //83 cm forward
+    go_to_XY(25.0, 202.0);
+    //28 cm to the right
+    go_to_XY(53.0, 202.0);
+    sleep(3);
+    open_ball();
+    position_stop();
 }
-void test5(){
 
+// START WITH BALL ENGINE OPEN!!!!!!!!
+void test5(){
+    eye_start();
+    go_straight(2);
+    eye_stop();
 }
 
 
@@ -42,12 +74,7 @@ int main ( void ) {
     engine_init();
     engine_list();
     sn_init();
-    //position_start(0.0,0.0);
-    //eye_start();
-    test2();
-
-    position_stop();
-    //eye_stop();
+    test4();
     sleep(1);
     engine_reset();
     ev3_uninit();

@@ -47,9 +47,15 @@ void * update_position(){
     while(!position_terminate){
         get_encoders_values(&ticks_left,&ticks_right);
         // INVERT DISPLACMENT - DUE TO ENGINES BEING MOUNTED UPSIDE DOWN
-        diff_left  = (ticks_left - ticks_left_prev);
+	if(abs(ticks_left - ticks_left_prev) > 720 ){
+            ticks_left=-ticks_left;
+	}
+	if(abs(ticks_right - ticks_right_prev) > 720 ){
+	    ticks_right=-ticks_right;
+	}
+	diff_left  = (ticks_left - ticks_left_prev);
         diff_right = (ticks_right -ticks_right_prev);
-        displacement = (diff_left+diff_right) * ENCODER_SCALE_FACTOR / 2.0;
+	displacement = (diff_left+diff_right) * ENCODER_SCALE_FACTOR / 2.0;
 
         angle = sn_get_gyro_val();
         rotation = angle-angle_prev;
@@ -61,7 +67,9 @@ void * update_position(){
         POS_Y += displacement*cos(angle*M_PI/180.0);
         pthread_mutex_unlock(&position_mutex);
 
-        printf("POS: X:\t %.2f \t Y: \t %.2f A: %d D: %.02f\n",POS_X,POS_Y, HEADING, displacement); 
+        printf("POS: X:\t %.2f \t Y: \t %.2f A: %d D: %.02f, DiffL: %d, DiffR: %d\n",POS_X,POS_Y, HEADING, displacement, diff_left, diff_right); 
+	
+	printf("Left ticks prev: %d, Left ticks: %d, Right ticks prev: %d, Right ticks: %d\n", ticks_left_prev, ticks_left, ticks_right_prev, ticks_right);	
 
         ticks_left_prev = ticks_left;
         ticks_right_prev = ticks_right;
