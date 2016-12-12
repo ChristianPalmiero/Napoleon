@@ -47,11 +47,11 @@ void test4(){
     position_start(100.0, 19.0);
     //1 m forward
     go_to_XY(100.0, 119.0);
-    //65 cm to the left
+    //75 cm to the left
     go_to_XY(25.0, 119.0);
     //83 cm forward
     go_to_XY(25.0, 202.0);
-    //5 cm to the right
+    //28 cm to the right
     go_to_XY(53.0, 202.0);
     sleep(3);
     open_ball();
