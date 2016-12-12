@@ -135,7 +135,7 @@ void engine_stop ( void )
 void turn( int x , int direction)
 {
     engine_stop();
-
+    printf("Turning by: %d\n", x);
     uint8_t sn_active;
     uint8_t sn_passive;
 
@@ -168,7 +168,7 @@ void turn( int x , int direction)
     set_tacho_speed_sp( sn_active, MAX_SPEED);
     set_tacho_stop_action_inx( sn_active, TACHO_HOLD );
 
-    int current_angle = sn_get_gyro_val();
+    int current_angle = -sn_get_gyro_val();
     int target_angle = current_angle + x;
 
     // Start the active engine
@@ -179,11 +179,11 @@ void turn( int x , int direction)
     int deg_left_abs = abs(deg_left);
     int stage = 3;
     while ( (deg_left > 0 && x > 0 ) || ((deg_left < 0) && x < 0)) { // TODO: Check gyro value +/-
-        current_angle = sn_get_gyro_val();
+        current_angle = -sn_get_gyro_val();
         deg_left = target_angle - current_angle;
         deg_left_abs = abs(deg_left);
 
-        //printf("T: %d C: %d Deg_Left: %d\n",target_angle,current_angle,deg_left);
+        printf("TURN: T: %d C: %d Deg_Left: %d\n",target_angle,current_angle,deg_left);
         
         if ( stage == 1 && 0 < deg_left_abs && deg_left_abs <= 6 ) {
             set_tacho_speed_sp( sn_active, 20);
@@ -248,10 +248,11 @@ void go_to_XY(float xb, float yb){
     // Get current positions
     float xa, ya, distance;
     int heading, rotation;
-
+    printf("GO_TO_XY: Going toward X: %f Y: %f\n", xb,yb);
     // PHASE 1 - Orient toward the destination
     get_position_and_heading(&xa,&ya, &heading);
     get_dist_and_ang(xa,ya,xb,yb,heading,&distance,&rotation);
+    printf("GO_TO_XY: Distance: %.2f Rotation: %d\n", distance, rotation);
     turn(rotation,TURN_FORWARD);
 
     // PHASE 2 - Go to destination
@@ -262,13 +263,13 @@ void go_to_XY(float xb, float yb){
     while ( distance >= 5.0 ){
         get_position_and_heading(&xa,&ya, &heading);
         get_dist_and_ang(xa,ya,xb,yb,heading,&distance,&rotation);
-
+        printf("GO_TO_XY: Distance: %.2f Rotation: %d\n", distance, rotation);
         if ( rotation > 1 || rotation < -1 ){
             set_tacho_speed_sp(sn_engineR, MAX_SPEED+(rotation*2));
             set_tacho_speed_sp(sn_engineL, MAX_SPEED-(rotation*2));
             multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_FOREVER );
         }
-        Sleep(250);
+        Sleep(100);
     }
     engine_stop();
 }

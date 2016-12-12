@@ -14,6 +14,26 @@ void intHandler() {
 }
 
 
+void test1(){
+    position_start(100.0,0.0);
+    go_to_XY(100.0, 175.0);
+}
+void test2(){
+    position_start(100.0,10.0);
+    go_to_XY(100.0, 90.0);
+    go_to_XY(90.0, 90.0);
+}
+void test3(){
+
+}
+void test4(){
+
+}
+void test5(){
+
+}
+
+
 int main ( void ) {
 
     signal(SIGINT, intHandler);
@@ -22,28 +42,14 @@ int main ( void ) {
     engine_init();
     engine_list();
     sn_init();
-//    position_start(0.0,0.0);
-    eye_start();
-    go_straight(7);
-    turn(90,TURN_REVERSE);
-    if (ball_inside){
-        open_ball();
-    }
-    
-    /*  go_straight(4);
-    turn(90,TURN_FORWARD);
-    go_straight(3);
-    turn(-90,TURN_FORWARD);
-    go_straight(2);
-    turn(-90,TURN_FORWARD);
-    go_straight(3);
-    turn(90,TURN_FORWARD);
-    go_straight(4);
-*/   
-   
-   // position_stop();
-    eye_stop();
-    sleep(2);
+    //position_start(0.0,0.0);
+    //eye_start();
+
+    test2();
+
+    position_stop();
+    //eye_stop();
+    sleep(1);
     engine_reset();
     ev3_uninit();
 }

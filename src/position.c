@@ -53,7 +53,7 @@ void * update_position(){
 
         angle = sn_get_gyro_val();
         rotation = angle-angle_prev;
-
+        angle_prev = angle;
         // CALCULATE NEW X,Y
         pthread_mutex_lock(&position_mutex);
         HEADING += rotation;
@@ -61,11 +61,7 @@ void * update_position(){
         POS_Y += displacement*cos(angle*M_PI/180.0);
         pthread_mutex_unlock(&position_mutex);
 
-        printf("Position thread: \n");
-        printf("LEFT \tOLD: %d\t NEW: %d\t DISP: %d\n", ticks_left_prev, ticks_left, diff_left);
-        printf("RIGHT \tOLD: %d\t NEW: %d\t DISP: %d\n", ticks_right_prev, ticks_right, diff_right);
-        printf("ANGLE: \t %d \t DISPLACEMENT: %.02f\n", angle, displacement);
-        printf("X:\t %.2f \t Y: \t %.2f\n",POS_X,POS_Y); 
+        printf("POS: X:\t %.2f \t Y: \t %.2f A: %d D: %.02f\n",POS_X,POS_Y, HEADING, displacement); 
 
         ticks_left_prev = ticks_left;
         ticks_right_prev = ticks_right;
