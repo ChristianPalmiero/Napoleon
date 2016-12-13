@@ -124,6 +124,40 @@ void go_straight ( int seconds )
     return;
 }
 
+void go_back ( int seconds )
+{
+    int sleep_time = 100; // [ms]
+    multi_set_tacho_stop_action_inx( sn_engineLR, TACHO_BRAKE );
+    multi_set_tacho_polarity_inx( sn_engineLR, TACHO_INVERTED);
+    multi_set_tacho_speed_sp( sn_engineLR, MAX_SPEED );
+    multi_set_tacho_time_sp( sn_engineLR, seconds * 1000 );
+
+    if ( seconds > 0 ) {
+        int initial_angle = sn_get_gyro_val();
+        int current_angle = initial_angle;
+        int mseconds = seconds * 1000;
+        int error;
+        multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_TIMED );
+
+        // TODO: REPLACE THIS WITH A PROPER PID CONTROLER!
+        while (mseconds > 0){
+            current_angle = sn_get_gyro_val();
+            error = current_angle-initial_angle;
+            if (error > 1 || error < -1) {
+                set_tacho_speed_sp(sn_engineR, MAX_SPEED+(error*2));
+                set_tacho_speed_sp(sn_engineL, MAX_SPEED-(error*2));
+                multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_TIMED ); // TODO: FIX TIMED!
+            }
+            mseconds-=sleep_time;
+            Sleep(sleep_time);        
+        }
+        multi_set_tacho_command_inx( sn_engineLR, TACHO_STOP );
+    } else {
+        multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_FOREVER );
+    }
+    return;
+}
+
 /* Stop the engines */
 void engine_stop ( void )
 {
