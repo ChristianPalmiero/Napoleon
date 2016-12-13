@@ -25,6 +25,8 @@ void test2(){
     go_to_XY(74.0, 98.0);
     sleep(2);
     open_ball();
+    sleep(2);
+    go_back(1);
     position_stop();    
 }
 
@@ -55,13 +57,26 @@ void test4(){
     go_to_XY(53.0, 202.0);
     sleep(3);
     open_ball();
+    //sleep(2);
+    //go_back(2);
     position_stop();
 }
 
 // START WITH BALL ENGINE OPEN!!!!!!!!
 void test5(){
     eye_start();
-    go_straight(2);
+    while(!ball_inside){
+    	go_straight(350);
+    	if(!ball_inside){
+	    turn2(60);
+	}
+	if(!ball_inside){
+	    turn2(-120);
+	}
+	if(!ball_inside){
+	    turn2(60);
+	}
+    }
     eye_stop();
 }
 
@@ -74,7 +89,7 @@ int main ( void ) {
     engine_init();
     engine_list();
     sn_init();
-    test4();
+    test5();
     sleep(1);
     engine_reset();
     ev3_uninit();

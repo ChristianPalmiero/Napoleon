@@ -90,18 +90,17 @@ void engine_reset ( void )
 
 /* Go straight for a specified amount of seconds.
  * Passing 0 as number of seconds means go forever */
-void go_straight ( int seconds )
+void go_straight ( int mseconds )
 {
     int sleep_time = 100; // [ms]
     multi_set_tacho_stop_action_inx( sn_engineLR, TACHO_BRAKE );
     multi_set_tacho_polarity_inx( sn_engineLR, TACHO_NORMAL);
     multi_set_tacho_speed_sp( sn_engineLR, MAX_SPEED );
-    multi_set_tacho_time_sp( sn_engineLR, seconds * 1000 );
+    multi_set_tacho_time_sp( sn_engineLR, mseconds);
 
-    if ( seconds > 0 ) {
+    if ( mseconds > 0 ) {
         int initial_angle = sn_get_gyro_val();
         int current_angle = initial_angle;
-        int mseconds = seconds * 1000;
         int error;
         multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_TIMED );
 
@@ -128,7 +127,7 @@ void go_back ( int seconds )
 {
     int sleep_time = 100; // [ms]
     multi_set_tacho_stop_action_inx( sn_engineLR, TACHO_BRAKE );
-    multi_set_tacho_polarity_inx( sn_engineLR, TACHO_INVERTED);
+    multi_set_tacho_polarity_inx( sn_engineLR, TACHO_INVERSED);
     multi_set_tacho_speed_sp( sn_engineLR, MAX_SPEED );
     multi_set_tacho_time_sp( sn_engineLR, seconds * 1000 );
 
