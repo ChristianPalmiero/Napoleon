@@ -8,11 +8,12 @@ _OBJ= main.o engines.o sensors.o position.o eye.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 $(ODIR)/%.o: %.c $(DEPS)
-	$(CC) -c -o $(OUTPUT_DIR)$@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(ODIR)/main: $(OBJ)
-	$(CC) -o $(OUTPUT_DIR)$@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 clean:
-	rm -f ../obj/*
+	rm -f $(ODIR)/*.o
+	rm -f $(ODIR)/main
 
