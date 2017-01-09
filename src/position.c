@@ -79,6 +79,7 @@ void * update_position(){
 }
 
 void position_start(float x_start, float y_start){
+    pthread_mutex_init(&position_mutex, NULL);
     pthread_mutex_lock(&position_mutex);
     POS_X = x_start;
     POS_Y = y_start;
@@ -122,4 +123,12 @@ void get_position_and_heading(float * x, float *y, int * heading){
     *y = POS_Y;
     *heading = HEADING;
     pthread_mutex_unlock(&position_mutex);
+}
+
+int get_heading(){
+    static int heading;
+    pthread_mutex_lock(&position_mutex);
+    heading = HEADING;
+    pthread_mutex_unlock(&position_mutex);
+    return heading;
 }

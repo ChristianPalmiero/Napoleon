@@ -333,13 +333,18 @@ void close_ball ( void )
     return;
 }
 
-
 void get_encoders_values(int * disp_left, int * disp_right){
     get_tacho_position(sn_engineL, disp_left);
     get_tacho_position(sn_engineR, disp_right);
 }
 
+void adjust_speed_by(int err){
+    set_tacho_speed_sp(sn_engineR, MAX_SPEED+(err*1));
+    set_tacho_speed_sp(sn_engineL, MAX_SPEED-(err*1));
+    multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_FOREVER );
+}
 
+/*
 void go_to_XY(float xb, float yb){
     // Get current positions
     float xa, ya, distance;
@@ -372,4 +377,4 @@ void go_to_XY(float xb, float yb){
 	Sleep(100);
     }
     engine_stop();
-}
+}*/

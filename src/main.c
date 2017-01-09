@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include "eye.h"
+#include "nav.h"
+
 void intHandler() {
     engine_reset();
     //position_stop();
@@ -89,8 +91,10 @@ int main ( void ) {
     engine_init();
     engine_list();
     sn_init();
-    test5();
+    position_start(0.0, 0.0);
+    find_ball();
     sleep(1);
+    position_stop();
     engine_reset();
     ev3_uninit();
 }
