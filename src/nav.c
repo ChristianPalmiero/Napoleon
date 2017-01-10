@@ -48,26 +48,36 @@ void go_to_XY(float xb, float yb){
 
 
 void find_ball(){
-    int init_head, head;
+    int init_head, head, head_us, right_t;
     float val;
     eye_start();
     while(!ball_inside){
-        go_straight(350);
+        //go_straight(350);
 	init_head = get_heading();
+	printf("FIND BALL: Initial heading: %d\n", init_head);
         if(!ball_inside){
-            turn2(75);
+	    printf("Initial heading: %d\n", get_heading());
+            turn2(75-get_heading());
         }
         if(!ball_inside){
-            turn2(-140);
+	    head = get_heading();
+	    printf("FIND BALL: heading: %d, turning by: %d\n", head, -2*(init_head-head));
+            turn2(-2*(init_head-head));
         } 
-        if(obstacle_detected(&val, &head)){
+	
+        if(obstacle_detected(&val, &head_us)){
 	    printf("Obstacle detected!\n");
             head = get_heading();
-            turn2(-(init_head-head));
-	    go_straight(750);
+	    printf("FIND BALL: head_us %d, head %d\n", head_us, head);
+            turn2(-(head_us-head));
+	    right_t = (int)((val-45)/300.0*1000);
+	    printf("FIND BALL: Right_t: %d\n", right_t);
+	    go_straight(right_t);
 	}
         else{
-            turn2(75);
+            head = get_heading();
+            turn2(-(init_head-head));
+            go_straight(350);
         }
     }
     eye_stop();

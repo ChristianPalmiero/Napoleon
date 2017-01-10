@@ -67,9 +67,9 @@ void * update_position(){
         POS_Y += displacement*cos(angle*M_PI/180.0);
         pthread_mutex_unlock(&position_mutex);
 
-        printf("POS: X:\t %.2f \t Y: \t %.2f A: %d D: %.02f, DiffL: %d, DiffR: %d\n",POS_X,POS_Y, HEADING, displacement, diff_left, diff_right); 
+        //printf("POS: X:\t %.2f \t Y: \t %.2f A: %d D: %.02f, DiffL: %d, DiffR: %d\n",POS_X,POS_Y, HEADING, displacement, diff_left, diff_right); 
 	
-	printf("Left ticks prev: %d, Left ticks: %d, Right ticks prev: %d, Right ticks: %d\n", ticks_left_prev, ticks_left, ticks_right_prev, ticks_right);	
+	//printf("Left ticks prev: %d, Left ticks: %d, Right ticks prev: %d, Right ticks: %d\n", ticks_left_prev, ticks_left, ticks_right_prev, ticks_right);	
 
         ticks_left_prev = ticks_left;
         ticks_right_prev = ticks_right;

@@ -32,11 +32,12 @@ void * eye_check(){
         detected_color = (int) sn_get_color_val();
         ball_distance = sn_get_sonar_val();
 	//printf("Detected distance: %f\n", ball_distance);
-	if (ball_distance < US_THRESHOLD){
+	if (ball_distance < US_THRESHOLD && ball_distance <= smallest_val){
 	    pthread_mutex_lock(&nav_mutex);
             smallest_val = ball_distance;
 	    smallest_head = get_heading();
             pthread_mutex_unlock(&nav_mutex);
+	    printf("EYE_V: %f\t%d\n",smallest_val, smallest_head);
 	}
  
         //printf("Detected color idx: %d\n", detected_color);
@@ -65,10 +66,10 @@ bool obstacle_detected(float *val, int *head){
     if(smallest_val<US_THRESHOLD){
         *val = smallest_val;
         *head = smallest_head;
-    printf("\n\nSmallest Value: %f\n\n", smallest_val);
         reset_value();
  	pthread_mutex_unlock(&nav_mutex);       
-        printf("\n\nValue: %f, Heading: %d\n\n", *val, *head);
+        //printf("EYE: Smallest Value: %f\n", smallest_val);
+        printf("EYE: Value: %f, Heading: %d\n", *val, *head);
         return true;
     }
     else{
@@ -77,6 +78,24 @@ bool obstacle_detected(float *val, int *head){
         return false;
     }
 }
+
+/*bool obstacle_detected(float *val, int *head){
+    pthread_mutex_lock(&nav_mutex);       
+    if(smallest_val<US_THRESHOLD){
+        *val = smallest_val;
+        *head = smallest_head;
+        reset_value();
+ 	pthread_mutex_unlock(&nav_mutex);       
+        printf("EYE: Smallest Value: %f\n", smallest_val);
+        printf("EYE: Value: %f, Heading: %d\n", *val, *head);
+        return true;
+    }
+    else{
+        reset_value();
+        pthread_mutex_unlock(&nav_mutex);
+        return false;
+    }
+}*/
 
 void eye_stop(){
     printf("Waiting for THE EYE thread to terminate...\n");
