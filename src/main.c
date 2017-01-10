@@ -21,15 +21,19 @@ void test1(){
     position_stop();
 }
 
-void test2(){
-    position_start(100.0,19.0);
+void arena_small_beginner(){
     go_to_XY(100.0, 98.0);
     go_to_XY(74.0, 98.0);
-    sleep(2);
-    open_ball();
-    sleep(2);
+    find_ball();  
+    go_to_XY(100.0,177.0);
+}
+
+void arena_small_finisher(){
+    go_to_XY(62.0, 107.0);
+    sleep(4);
+    open_ball();  
     go_back(1);
-    position_stop();    
+    go_to_XY(100.0,19.0);
 }
 
 void test3(){
@@ -91,9 +95,13 @@ int main ( void ) {
     engine_init();
     engine_list();
     sn_init();
-    position_start(0.0, 0.0);
-    find_ball();
-    sleep(1);
+    position_start(100.0,19.0);
+    while(1){
+	arena_small_beginner();
+        arena_small_finisher();
+        ball_inside = false;
+        sleep(1);
+    }
     position_stop();
     engine_reset();
     ev3_uninit();

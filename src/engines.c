@@ -16,7 +16,7 @@ const int MAX_SPEED = 500;
 
 #define Sleep( msec ) usleep(( msec ) * 1000 )
 
-
+int stop_turn;
 uint8_t sn_engineR;
 uint8_t sn_engineL;
 uint8_t sn_engineLR[3];
@@ -253,6 +253,7 @@ void turn2( int x)
 {
     engine_stop();
     printf("Turning2 by: %d\n", x);
+    stop_turn = 0;
 
     if ( x > 0 ) {
         set_tacho_polarity_inx( sn_engineL, TACHO_INVERSED);
@@ -280,7 +281,7 @@ void turn2( int x)
     int deg_left = target_angle - current_angle;
     int deg_left_abs = abs(deg_left);
     int stage = 3;
-    while ( (deg_left > 0 && x > 0 ) || ((deg_left < 0) && x < 0)) { // TODO: Check gyro value +/-
+    while ( stop_turn==0 && ((deg_left > 0 && x > 0 ) || ((deg_left < 0) && x < 0))) { // TODO: Check gyro value +/-
         current_angle = -sn_get_gyro_val();
         deg_left = target_angle - current_angle;
         deg_left_abs = abs(deg_left);
@@ -324,11 +325,13 @@ void open_ball ( void )
 /*Close the engine for grabbing the ball*/
 void close_ball ( void )
 {
+    engine_stop();
     set_tacho_ramp_up_sp(sn_engineM, 0);
     set_tacho_speed_sp(sn_engineM, 1000);
     set_tacho_command_inx(sn_engineM, TACHO_STOP);
     set_tacho_position_sp(sn_engineM, +40);
     set_tacho_command_inx(sn_engineM, TACHO_RUN_TO_REL_POS );
+    printf("Stopping and closing ball engine!\n");
 
     return;
 }

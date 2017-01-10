@@ -3,6 +3,8 @@
 
 enum { TURN_FORWARD, TURN_REVERSE };
 
+extern int stop_turn;
+
 int engine_init(void);
 void engine_list(void);
 void engine_reset(void);

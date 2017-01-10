@@ -9,7 +9,6 @@
 #include "position.h"
 
 #define Sleep( msec ) usleep(( msec ) * 1000 )
-#define US_THRESHOLD 300
 
 int eye_update_interval = 50; // [ms]
 int smallest_head;
@@ -44,6 +43,7 @@ void * eye_check(){
         //printf("Detected color: %s\n", color[detected_color]);
 
         if (detected_color == 5) {
+	    stop_turn = 1;
             close_ball();
             ball_inside = true;
             return NULL;
@@ -55,6 +55,7 @@ void * eye_check(){
 
 void eye_start(){
     reset_value();
+    eye_terminate = false;
     pthread_mutex_init(&nav_mutex, NULL);
     printf("Creating THE EYE threat... ");
     pthread_create(&eye_tid, NULL, eye_check, NULL);
