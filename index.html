@@ -32,11 +32,11 @@
 <h3>
 <a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bienvenue! Witam! Benvenuto!</h3>
 
-<p>Bonjour!<p>
+<p>Bonjour!</p>
 <p>My name is Napoleon and I was created to be a winner. The history of my name is quite interesting but you have to ask my owners about it.
-I was born in November 2016 in EURECOM so I am a Newbie in relay race. But I am equipped with great engines so I can go really fast! You will see!<p>
-<p>I have ears (ultrasound sonar) not to bang into big boxes which will be on my way. I have eyes (colour sensor) and two hands (engine) to to grab small red ball. I have also compass on my head and gyro in my tummy not to get lost.<p> 
-<p>I am very friendly robot so thanks to my Bluetooth I can communicate with my robot friends.<p>
+I was born in November 2016 in EURECOM so I am a Newbie in relay race. But I am equipped with great engines so I can go really fast! You will see!</p>
+<p>I have ears (ultrasound sonar) not to bang into big boxes which will be on my way. I have eyes (colour sensor) and two hands (engine) to to grab small red ball. I also have a gyro in my tummy to not get lost.</p> 
+<p>I am very friendly robot so thanks to my Bluetooth I can communicate with my robot friends.</p>
 
 You can see on my pictures how fancy I am :) </p>
 
@@ -45,12 +45,50 @@ You can see on my pictures how fancy I am :) </p>
 
 TODO: more technical
 
-<p></p>
 
 <h3>
 <a id="algorithms" class="anchor" href="#algorithms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Algorithms</h3>
 
-<p>TODO: Algorithms used for the two most important points: beginner strategy (e.g., movement choices and ball management), and finisher algorithms. Don't provide source code here, just try to describe the algorithms using a pseudo C language. Also, do comment those algorithms, and explain why you think they are efficient.</p>
+
+<ol>
+	<li><b>Position tracking</b>
+	<br>
+	<br>To track the position of the robot we used Gyro Enhanced Odometry approach.
+	  <ol type="a">
+	  
+		<li>Using the encoders obtaine wheel displacement of the robot.</li>
+		<li>Using gyroscope obtain relative rotation since the last check.</li>
+		<li>Using trygonometry properties calculate X and Y differences.</li>
+		<li>Update robot position by integrating obtained results.</li>
+		<li>Repeat the algorithm every 100ms.</li>
+	  </ol>
+	<p> Implemented algorithm: <a href="https://github.com/ChristianPalmiero/Napoleon/blob/master/src/position.c" target="_blank">position.c</a>
+	</p>
+	</li>
+	
+	<li><b>Navigation and movement</b>
+	<br>
+	<br>
+	To navigate over the arena we implemented go_to_XY(X, Y) function. This function is using the information
+	from our position tracking thread to calculate required rotation towards the target and distance. After 
+	the calculations are completed, the movement plan is executed and corrected as new position data becomes available.
+	<p>Combining our position tracking and navigation functions we can execute the plan for the entire 
+	race using very simple high-level commands.
+	<br>Following example demonstarte our movement plan for follower for the small arena:
+	<script src="https://gist.github.com/kmaslows/9447f4f023aacf979ef19d071bce1250.js"></script>
+	</p>
+	</li>
+	
+	<li><b>Ball management and ball detection</b>
+	<br>
+	<br>For the ball management we used simple approach as presented on the picture below:
+	<br>TODO: PICTURE
+	<p> To find the ball we implemented <a href="https://github.com/ChristianPalmiero/Napoleon/blob/master/src/nav.c" target="_blank">find_ball()</a> function.
+	This function is using the data provided by <a href="https://github.com/ChristianPalmiero/Napoleon/blob/master/src/eye.c" target="_blank">eye.c</a> thread. 
+	The eye when initialized is gathering the information from the colour sensor and ultra sound sensor and then can feed 
+	find_ball() function with information about the nearst ball or obstacle.</p>
+	</li>
+</ol>
 
 <h3>
 <a id="source-code" class="anchor" href="#source-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Source code</h3>

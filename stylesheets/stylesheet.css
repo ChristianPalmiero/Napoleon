@@ -732,13 +732,17 @@ ul {
 
 ol {
   list-style-position: inside;
-  list-style: decimal;
+  
   padding-left: 3px;
 }
 
 dl dd {
   font-style: italic;
   font-weight: 100;
+}
+
+ol > li {
+    margin-left: 15px;
 }
 
 footer {
