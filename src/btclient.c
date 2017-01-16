@@ -43,11 +43,12 @@
 int read_from_server (int sock, char *buffer, size_t maxSize) {
     int bytes_read = read (sock, buffer, maxSize);
 
-    if (bytes_read <= 0) {
+/*    if (bytes_read <= 0) {
         fprintf (stderr, "Server unexpectedly closed connection...\n");
         close (sock);
         exit (EXIT_FAILURE);
     }
+*/
 
     printf ("[DEBUG] received %d bytes\n", bytes_read);
 
@@ -80,12 +81,40 @@ int bt_close(int *s){
 
 /* Read and check */
 int bt_check(int s){
+    ssize_t nbyte;
+    char string[58]; 
 
     /* Read from server */
     nbyte = read_from_server (s, string, 7);
 
-
-    
+    if(nbyte==-1){
+        fprintf (stderr, "Server unexpectedly closed connection...\n");
+        bt_close (&s);
+        exit (EXIT_FAILURE);
+    }
+    else if(nbyte==0){
+	printf ("Nothing to read\n");
+        return 0;
+    }
+    else{
+	switch(string[4]) {
+	    case MSG_ACK :
+		break;
+	    case MSG_NEXT :
+		break;
+	    case MSG_START :
+		break;
+	    case MSG_STOP :
+		break;
+	    case MSG_KICK :
+		break;
+	    case MSG_BALL :
+		break;
+	    default :
+		printf("Invalid msg\n");
+		break;
+	}
+   }
 
 }
 
