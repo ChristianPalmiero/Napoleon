@@ -7,6 +7,7 @@
 #include <signal.h>
 #include "eye.h"
 #include "nav.h"
+#include "bluetooth.h"
 
 void intHandler() {
     engine_reset();
@@ -93,8 +94,15 @@ int main ( void ) {
 
     if ( ev3_init() == -1 ) return ( 1 );
     engine_init();
-    engine_list();
     sn_init();
+    bt_start();
+    
+
+    while(1){
+    
+    }
+
+
     position_start(100.0,19.0);
     while(1){
 	arena_small_beginner();

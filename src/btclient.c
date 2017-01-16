@@ -21,16 +21,6 @@
 #define MSG_POSITION 6
 #define MSG_BALL    7
 
-//void debug (const char *fmt, ...) {
-//    va_list argp;
-//
-//    va_start (argp, fmt);
-//
-//    vprintf (fmt, argp);
-//
-//    va_end (argp);
-//}
-
 
 //TO BE DECLARED INTO THE MAIN FILE
 //uint8_t role = 0x00;      /* 0 -> Beginner; 1 -> Finisher */
@@ -39,38 +29,23 @@
 //uint16_t msgId = 0x0000;
 //int s;
 
-/* Read data from the server */
-int read_from_server (int sock, char *buffer, size_t maxSize) {
-    int bytes_read = read (sock, buffer, maxSize);
-
-/*    if (bytes_read <= 0) {
-        fprintf (stderr, "Server unexpectedly closed connection...\n");
-        close (sock);
-        exit (EXIT_FAILURE);
-    }
-*/
-
-    printf ("[DEBUG] received %d bytes\n", bytes_read);
-
-    return bytes_read;
-}
 
 /* Initialize bluetooth connection */
 int bt_init(int *s){
     struct sockaddr_rc addr = { 0 };
     int status;
-    
+
     /* Allocate a socket */
     *s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
-    
+
     /* Set the connection parameters (who to connect to) */
     addr.rc_family = AF_BLUETOOTH;
     addr.rc_channel = (uint8_t) 1;
     str2ba (SERV_ADDR, &addr.rc_bdaddr);
-    
+
     /* Connect to server */
     status = connect(*s, (struct sockaddr *)&addr, sizeof(addr));
-    
+
     /* Return 0 if connected */
     return status;
 }
@@ -85,7 +60,8 @@ int bt_check(int s){
     char string[58]; 
 
     /* Read from server */
-    nbyte = read_from_server (s, string, 7);
+    //nbyte = read_from_server (s, string, 7);
+    nbyte = read (s, string, 7);
 
     if(nbyte==-1){
         fprintf (stderr, "Server unexpectedly closed connection...\n");
@@ -93,35 +69,45 @@ int bt_check(int s){
         exit (EXIT_FAILURE);
     }
     else if(nbyte==0){
-	printf ("Nothing to read\n");
+        printf ("BT: Nothing to read\n");
         return 0;
     }
     else{
-	switch(string[4]) {
-	    case MSG_ACK :
-		break;
-	    case MSG_NEXT :
-		break;
-	    case MSG_START :
-		break;
-	    case MSG_STOP :
-		break;
-	    case MSG_KICK :
-		break;
-	    case MSG_BALL :
-		break;
-	    default :
-		printf("Invalid msg\n");
-		break;
-	}
-   }
+        switch(string[4]) {
+            case MSG_ACK :
+                bt_recv_ack(char * msg, ssize_t nbyte);
+                break;
+            case MSG_NEXT :
+                bt_recv_next(char * msg, ssize_t nbyte);
+                break;
+            case MSG_START :
+                bt_recv_start(char * msg, ssize_t nbyte);
+                break;
+            case MSG_STOP :
+                bt_recv_stop(char * msg, ssize_t nbyte);
+                break;
+            case MSG_KICK :
+                bt_recv_stop(char * msg, ssize_t nbyte);
+                break;
+            case MSG_BALL :
+                bt_recv_ball(char * msg, ssize_t nbyte);
+                break;
+            default :
+                printf("BT: Invalid msg\n");
+                break;
+        }
+    }
 
 }
+
+
+/*******************************  SENDING ******************************************/
+
 
 /* Send an ACK message */
 ssize_t bt_send_ack(int s, uint16_t msgId, uint16_t ackId, uint8_t dest, uint8_t statusCode){
     char string[58];
-    
+
     // Remember to increment msgId
     *((uint16_t *) string) = msgId;
     string[2] = TEAM_ID;
@@ -129,7 +115,7 @@ ssize_t bt_send_ack(int s, uint16_t msgId, uint16_t ackId, uint8_t dest, uint8_t
     string[4] = MSG_ACK;
     *((uint16_t *) string+5) = ackId;
     string[7] = statusCode;
-    
+
     /* Return number of bytes written */
     return write(s, string, 8);
 }
@@ -137,78 +123,22 @@ ssize_t bt_send_ack(int s, uint16_t msgId, uint16_t ackId, uint8_t dest, uint8_t
 /* Send a NEXT message to the ally */
 ssize_t bt_send_next(int s, uint16_t msgId, uint8_t ally){
     char string[58];
-    
+
     // Remember to increment msgId
     *((uint16_t *) string) = msgId;
     string[2] = TEAM_ID;
     string[3] = ally;
     string[4] = MSG_NEXT;
-    
+
     /* Return number of bytes written */
     return write(s, string, 5);
 }
 
-/* Receive a START message from the server */
-ssize_t bt_start(int s, uint8_t *role, uint8_t *side, uint8_t *ally){
-    char string[58];
-    ssize_t nbyte;
-    
-    /* Read from server */
-    nbyte = read_from_server (s, string, 7);
-    
-    if (string[4] == MSG_START) {
-        printf ("Received start message!\n");
-        *role = (uint8_t) string[5];
-        *side = (uint8_t) string[6];
-        *ally = (uint8_t) string[7];
-    }
-    else
-        nbyte = -1;
-    
-    /* Return number of bytes read */
-    return nbyte;
-}
-
-/* Receive a STOP message from the server */
-ssize_t bt_stop(int s){
-    char string[58];
-    ssize_t nbyte;
-    
-    /* Read from server */
-    nbyte = read_from_server (s, string, 5);
-    
-    if (string[4] == MSG_STOP) {
-        printf ("Received stop message!\n");
-    }
-    else
-        nbyte = -1;
-    
-    /* Return number of bytes read */
-    return nbyte;
-}
-
-/* Receive a KICK message from the server */
-ssize_t bt_kick(int s){
-    char string[58];
-    ssize_t nbyte;
-    
-    /* Read from server */
-    nbyte = read_from_server (s, string, 6);
-    
-    if (string[4] == MSG_KICK) {
-        printf ("Received stop message!\n");
-    }
-    else
-        nbyte = -1;
-    
-    /* Return number of bytes read */
-    return nbyte;
-}
 
 /* Send a POSITION message to the server */
 ssize_t bt_send_position(int s, uint16_t msgId, int16_t x, int16_t y){
     char string[58];
-    
+
     // Remember to increment msgId
     *((uint16_t *) string) = msgId;
     string[2] = TEAM_ID;
@@ -220,7 +150,7 @@ ssize_t bt_send_position(int s, uint16_t msgId, int16_t x, int16_t y){
     string[6] = (uint8_t)(x>>8);
     string[7] = (uint8_t)(y);
     string[8]= (uint8_t)(y>>8);
-    
+
     /* Return number of bytes written */
     return write(s, string, 9);
 }
@@ -228,7 +158,7 @@ ssize_t bt_send_position(int s, uint16_t msgId, int16_t x, int16_t y){
 /* Send a BALL message to the ally */
 ssize_t bt_send_ball(int s, uint16_t msgId, uint8_t ally, uint8_t pick_notDrop, int16_t x, int16_t y){
     char string[58];
-    
+
     // Remember to increment msgId
     *((uint16_t *) string) = msgId;
     string[2] = TEAM_ID;
@@ -240,10 +170,66 @@ ssize_t bt_send_ball(int s, uint16_t msgId, uint8_t ally, uint8_t pick_notDrop, 
     string[6] = (uint8_t)(x);
     string[7] = (uint8_t)(x>>8);
     string[8] = (uint8_t)(y);
-    string[9]= (uint8_t)(y>>8);
-    
+    string[9] = (uint8_t)(y>>8);
+
     /* Return number of bytes written */
     return write(s, string, 10);
+}
+
+/*  **************************** RECEIVING ****************************************/
+
+int bt_recv_ack(char * msg, ssize_t nbyte){
+    if (msg[4] == MSG_ACK){
+        printf("Recieved ACK\n");
+        return 0;
+    } else {
+        return -1;
+    }
+};
+
+int bt_recv_next(char * msg, ssize_t nbyte){
+    if (msg[4] == MSG_NEXT){
+        printf("Recieved Next message\n");
+        return 0;
+    } else {
+        return -1;
+    }
+};
+
+
+/* Receive a START message from the server */
+int bt_recv_start(char * msg, ssize_t nbyte){
+    if ( msg[4] == MSG_START) {
+        printf ("Received start message!\n");
+        *role = (uint8_t) string[5];
+        *side = (uint8_t) string[6];
+        *ally = (uint8_t) string[7];
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+/* Receive a STOP message from the server */
+int bt_recv_stop(char * msg, ssize_t nbyte){
+
+    if (msg[4] == MSG_STOP) {
+        printf ("Received stop message!\n");
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+/* Receive a KICK message from the server */
+int bt_recv_kick(char * msg, ssize_t nbyte){
+
+    if (msg[4] == MSG_KICK) {
+        printf ("Received stop message!\n");
+        return 0;
+    } else {
+        return = -1;
+    }
 }
 
 //int main(int argc, char **argv) {
