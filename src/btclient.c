@@ -26,7 +26,8 @@
 //uint8_t side = 0x00;      /* 0 -> Right; 1 -> Left */
 //uint8_t ally = 0x00;      /* ID of the robot in the same team */
 uint16_t msgId = 0x0000;
-int s;
+int s=0;
+uint8_t role, side, ally;    
 
 /* Initialize bluetooth connection */
 int bt_init(){
@@ -57,10 +58,8 @@ int bt_check(){
     ssize_t nbyte;
     char msg[58]; 
     
-
     /* Read from server */
-    //nbyte = read_from_server (s, string, 7);
-    nbyte = read (s, msg, 7);
+    nbyte = read (s, msg, 10);
 
     if(nbyte==-1){
         fprintf (stderr, "Server unexpectedly closed connection...\n");
@@ -72,30 +71,31 @@ int bt_check(){
         return 0;
     }
     else{
-        switch(string[4]) {
+        switch(msg[4]) {
             case MSG_ACK :
-                bt_recv_ack(msg, nbyte);
+                bt_recv_ack(msg);
                 break;
             case MSG_NEXT :
-                bt_recv_next(msg, nbyte);
+                bt_recv_next(msg);
                 break;
             case MSG_START :
-                bt_recv_start(msg, nbyte);
+                bt_recv_start(msg);
                 break;
             case MSG_STOP :
-                bt_recv_stop(msg, nbyte);
+                bt_recv_stop(msg);
                 break;
             case MSG_KICK :
-                bt_recv_stop(msg, nbyte);
+                bt_recv_kick(msg);
                 break;
             case MSG_BALL :
-                bt_recv_ball(msg, nbyte);
+                bt_recv_ball(msg);
                 break;
             default :
                 printf("BT: Invalid message\n");
                 break;
         }
     }
+    return nbyte;
 }
 
 
@@ -175,7 +175,7 @@ ssize_t bt_send_ball(uint8_t ally, uint8_t pick_notDrop, int16_t x, int16_t y){
 /*  **************************** RECEIVING ****************************************/
 
 /* Receive an ACK message from the server */
-int bt_recv_ack(char * msg, ssize_t nbyte){
+int bt_recv_ack(char * msg){
     if (msg[4] == MSG_ACK){
         printf("Received Ack message id=%u with status code=%u\n", *((uint16_t *) msg[5]), (uint16_t)msg[7]);
         return 0;
@@ -185,7 +185,7 @@ int bt_recv_ack(char * msg, ssize_t nbyte){
 };
 
 /* Receive a NEXT message from the server */
-int bt_recv_next(char * msg, ssize_t nbyte){
+int bt_recv_next(char * msg){
     if (msg[4] == MSG_NEXT){
         printf("Recieved Next message\n");
         return 0;
@@ -195,12 +195,12 @@ int bt_recv_next(char * msg, ssize_t nbyte){
 };
 
 /* Receive a START message from the server */
-int bt_recv_start(char * msg, ssize_t nbyte, uint8_t *role, uint8_t *side, uint8_t *ally){
+int bt_recv_start(char * msg){
     if ( msg[4] == MSG_START) {
-        *role = (uint8_t) string[5];
-        *side = (uint8_t) string[6];
-        *ally = (uint8_t) string[7];
-        printf ("Received Start message with role=%u, side=%u, ally=%u!\n", *role, *side, *ally);
+        role = (uint8_t) msg[5];
+        side = (uint8_t) msg[6];
+        ally = (uint8_t) msg[7];
+        printf ("Received Start message with role=%u, side=%u, ally=%u!\n", role, side, ally);
         return 0;
     } else {
         return -1;
@@ -208,7 +208,7 @@ int bt_recv_start(char * msg, ssize_t nbyte, uint8_t *role, uint8_t *side, uint8
 }
 
 /* Receive a STOP message from the server */
-int bt_recv_stop(char * msg, ssize_t nbyte){
+int bt_recv_stop(char * msg){
 
     if (msg[4] == MSG_STOP) {
         printf ("Received Stop message!\n");
@@ -219,18 +219,19 @@ int bt_recv_stop(char * msg, ssize_t nbyte){
 }
 
 /* Receive a KICK message from the server */
-int bt_recv_kick(char * msg, ssize_t nbyte){
+int bt_recv_kick(char * msg){
 
     if (msg[4] == MSG_KICK) {
         printf ("Received Kick message for ID=%u!\n", msg[5]);
+        //bt_send_ack(*((uint16_t *)msg), 255, 0);
         return 0;
     } else {
-        return = -1;
+        return -1;
     }
 }
 
 /* Receive a BALL message from the server */
-int bt_recv_ball(char * msg, ssize_t nbyte){
+int bt_recv_ball(char * msg){
     char x[2], y[2];
 
     if (msg[4] == MSG_BALL) {
@@ -241,7 +242,7 @@ int bt_recv_ball(char * msg, ssize_t nbyte){
         printf ("Received Ball message with Ball=%u, X=%d, Y=%d!\n", (uint8_t)msg[5], (int16_t)x, (int16_t)y);
         return 0;
     } else {
-        return = -1;
+        return -1;
     }
 }
 

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "ev3.h"
 #include "sensors.h"
 #include "engines.h"
@@ -7,7 +8,7 @@
 #include <signal.h>
 #include "eye.h"
 #include "nav.h"
-#include "bluetooth.h"
+#include "btclient.h"
 
 void intHandler() {
     engine_reset();
@@ -89,27 +90,52 @@ void test5(){
 
 
 int main ( void ) {
+    //uint8_t role = 0x00;      /* 0 -> Beginner; 1 -> Finisher */
+    //uint8_t side = 0x00;      /* 0 -> Right; 1 -> Left */
+    //uint8_t ally = 0x00;      /* ID of the robot in the same team */
+    char buffer[58];
 
     signal(SIGINT, intHandler);
 
     if ( ev3_init() == -1 ) return ( 1 );
     engine_init();
     sn_init();
-    bt_start();
-    
-
-    while(1){
-    
-    }
-
-
     position_start(100.0,19.0);
-    while(1){
+    /* if connected */
+    if( bt_init() == 0 ) {
+        printf("Connected!\n");
+
+/*        //TO BE REMOVED IN THE COMPETITION
+        bt_recv_kick(buffer);
+        bt_recv_kick(buffer);
+        bt_recv_kick(buffer);
+*/
+      
+	/* Wait for START message */
+        bt_check();
+        bt_check();
+        bt_check();
+        bt_check();
+        printf("Role: %d, Side: %d, Ally: %d\n", role, side, ally);
+        if (role == 0)
+            printf("Beginner\n");
+            //beginner ();
+        else
+            printf("Finisher\n");
+            //finisher ();
+    } else {
+        fprintf (stderr, "Failed to connect to server...\n");
+        sleep (2);
+        exit (EXIT_FAILURE);
+    }
+/*    while(1){
 	arena_small_beginner();
         arena_small_finisher();
         ball_inside = false;
         sleep(1);
     }
+*/
+    bt_close();
     position_stop();
     engine_reset();
     ev3_uninit();

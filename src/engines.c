@@ -10,7 +10,7 @@
 #include <math.h>
 #include "position.h"
 #define RIGHT 68
-#define LEFT 67
+#define LEFT 66
 #define BALL 65
 const int MAX_SPEED = 500; 
 
