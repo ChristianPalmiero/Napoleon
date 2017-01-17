@@ -228,10 +228,6 @@ int bt_recv_start(char * msg){
 	    else
 		arena_big_beginner(-1);
 	}
-        /*else if(role==1 && side==0)
-	    arena_big_finisher(1);
-	else if(role==1 && side==1)
-	    arena_big_finisher(-1);*/
         return 0;
     } else {
         return -1;
