@@ -27,6 +27,7 @@
 
 uint16_t msgId = 0x0000;
 int s=0;
+bool moving=false;
 uint8_t role, side, ally;    
 
 /* Initialize bluetooth connection */
@@ -130,6 +131,7 @@ ssize_t bt_send_next(uint8_t ally){
     string[3] = ally;
     string[4] = MSG_NEXT;
 
+    moving=false;
     /* Return number of bytes written */
     return write(s, string, 5);
 }
@@ -199,6 +201,13 @@ int bt_recv_next(char * msg){
     if (msg[4] == MSG_NEXT){
         printf("Recieved Next message\n");
         bt_send_ack(*((uint16_t *) msg), ally, 0);
+	if(role==1){
+	    moving=true;
+	    if(side==0)
+                arena_big_finisher(1);
+            else
+                arena_big_finisher(-1);
+	}
         return 0;
     } else {
         return -1;
@@ -212,14 +221,17 @@ int bt_recv_start(char * msg){
         side = (uint8_t) msg[6];
         ally = (uint8_t) msg[7];
         printf ("Received Start message with role=%u, side=%u, ally=%u!\n", role, side, ally);
-        if(role==0 and side==0)
-	    arena_big_beginner(1);
-	else if(role==0 and side==1)
-	    arena_big_beginner(-1);
-        else if(role==1 and side==0)
+        if(role==0){
+	    moving=true;
+	    if(side==0)
+	        arena_big_beginner(1);
+	    else
+		arena_big_beginner(-1);
+	}
+        /*else if(role==1 && side==0)
 	    arena_big_finisher(1);
-	else if(role==1 and side==1)
-	    arena_big_finisher(-1);
+	else if(role==1 && side==1)
+	    arena_big_finisher(-1);*/
         return 0;
     } else {
         return -1;
@@ -284,12 +296,12 @@ void *bt_send(){
 
 pthread_t t;
 
-void bt_start_trasmit(){
+void bt_start_transmit(){
     bt_term = false;
     pthread_create(&t, NULL, bt_send, NULL);
 }
 
-void bt_stop_trasmit(){
+void bt_stop_transmit(){
     bt_term = true;
     pthread_join(t, NULL);
 }

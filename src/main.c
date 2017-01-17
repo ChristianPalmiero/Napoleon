@@ -67,7 +67,7 @@ int main ( void ) {
     /* if connected */
     if( bt_init() == 0 ) {
         printf("Connected!\n");
-        bt_start_trasmit();
+        bt_start_transmit();
         while(1){
 	    bt_check();
         }

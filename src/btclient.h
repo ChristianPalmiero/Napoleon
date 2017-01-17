@@ -26,8 +26,8 @@ int bt_recv_kick(char * msg);
 int bt_recv_ball(char * msg);
 
 /* Thread */
-void bt_start_trasmit();
-void bt_stop_trasmit();
+void bt_start_transmit();
+void bt_stop_transmit();
 
 /* Variables */
 
