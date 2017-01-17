@@ -52,6 +52,7 @@ int bt_init(){
 }
 
 int bt_close(){
+    bt_stop_transmit();
     return close (s);
 }
 
@@ -211,6 +212,14 @@ int bt_recv_start(char * msg){
         side = (uint8_t) msg[6];
         ally = (uint8_t) msg[7];
         printf ("Received Start message with role=%u, side=%u, ally=%u!\n", role, side, ally);
+        if(role==0 and side==0)
+	    arena_big_beginner(1);
+	else if(role==0 and side==1)
+	    arena_big_beginner(-1);
+        else if(role==1 and side==0)
+	    arena_big_finisher(1);
+	else if(role==1 and side==1)
+	    arena_big_finisher(-1);
         return 0;
     } else {
         return -1;
@@ -222,6 +231,10 @@ int bt_recv_stop(char * msg){
 
     if (msg[4] == MSG_STOP) {
         printf ("Received Stop message!\n");
+        bt_close();
+        position_stop();
+        engine_reset();
+        ev3_uninit();
         return 0;
     } else {
         return -1;
@@ -262,9 +275,9 @@ int bt_recv_ball(char * msg){
 bool bt_term = false;
 
 void *bt_send(){
-    if(!bt_term){
-        bt_send_position();
-        sleep(2);
+    while(!bt_term){
+            bt_send_position();
+            sleep(2);
     }
     return NULL;
 }

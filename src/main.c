@@ -87,8 +87,8 @@ int main ( void ) {
     /* if connected */
     if( bt_init() == 0 ) {
         printf("Connected!\n");
-        for(int i=0; i<4; i++)
-	    bt_check();
+        //for(int i=0; i<4; i++)
+	    //bt_check();
         bt_start_trasmit();
         while(1){
 	    bt_check();
