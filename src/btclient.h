@@ -13,7 +13,7 @@ int bt_check();
 
 ssize_t bt_send_ack(uint16_t ackId, uint8_t dest, uint8_t statusCode);
 ssize_t bt_send_next(uint8_t ally);
-ssize_t bt_send_position(int16_t x, int16_t y);
+ssize_t bt_send_position();
 ssize_t bt_send_ball(uint8_t ally, uint8_t pick_notDrop, int16_t x, int16_t y);
 
 /*  Receiving */
@@ -24,6 +24,10 @@ int bt_recv_stop(char * msg);
 int bt_recv_start(char * msg);
 int bt_recv_kick(char * msg);
 int bt_recv_ball(char * msg);
+
+/* Thread */
+void bt_start_trasmit();
+void bt_stop_trasmit();
 
 /* Variables */
 

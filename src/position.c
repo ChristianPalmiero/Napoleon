@@ -63,9 +63,12 @@ void * update_position(){
         // CALCULATE NEW X,Y
         pthread_mutex_lock(&position_mutex);
         HEADING += rotation;
-        POS_X += displacement*sin(angle*M_PI/180.0);
-        POS_Y += displacement*cos(angle*M_PI/180.0);
-        pthread_mutex_unlock(&position_mutex);
+//        POS_X += displacement*sin(angle*M_PI/180.0);
+//      POS_Y += displacement*cos(angle*M_PI/180.0);
+  
+        POS_X += displacement*sin(HEADING*M_PI/180.0);
+        POS_Y += displacement*cos(HEADING*M_PI/180.0);
+      pthread_mutex_unlock(&position_mutex);
 
         //printf("POS: X:\t %.2f \t Y: \t %.2f A: %d D: %.02f, DiffL: %d, DiffR: %d\n",POS_X,POS_Y, HEADING, displacement, diff_left, diff_right); 
 	
@@ -78,9 +81,10 @@ void * update_position(){
     return NULL;
 }
 
-void position_start(float x_start, float y_start){
+void position_start(float x_start, float y_start, int heading){
     pthread_mutex_init(&position_mutex, NULL);
     pthread_mutex_lock(&position_mutex);
+    HEADING = heading;
     POS_X = x_start;
     POS_Y = y_start;
     pthread_mutex_unlock(&position_mutex);

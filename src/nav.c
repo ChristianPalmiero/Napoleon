@@ -17,9 +17,9 @@ void go_to_XY(float xb, float yb){
     // Get current positions
     float xa, ya, distance;
     int heading, rotation;
-    printf("GO_TO_XY: Going toward X: %f Y: %f\n", xb,yb);
     // PHASE 1 - Orient toward the destination
     get_position_and_heading(&xa,&ya, &heading);
+    printf("GO_TO_XY: Going toward X: %f Y: %f from X:%f Y:%f\n", xb,yb, xa, ya);
     get_dist_and_ang(xa,ya,xb,yb,heading,&distance,&rotation);
     printf("GO_TO_XY: Distance: %.2f Rotation: %d\n", distance, rotation);
     turn2(rotation);
@@ -33,7 +33,7 @@ void go_to_XY(float xb, float yb){
     while ( distance >= 10.0 ){
         get_position_and_heading(&xa,&ya, &heading);
         get_dist_and_ang(xa,ya,xb,yb,heading,&distance,&rotation);
-        printf("GO_TO_XY: Distance: %.2f Rotation: %d\n", distance, rotation);
+        printf("GO_TO_XY: Distance: %.2f Rotation: %d towards X: %f Y:%f from X: %f Y:%f\n", distance, rotation, xb, yb, xa, ya);
 
         if (rotation > 20 || rotation < -20){
             turn2(rotation);

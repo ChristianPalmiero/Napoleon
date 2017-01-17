@@ -8,7 +8,7 @@ extern int stop_turn;
 int engine_init(void);
 void engine_list(void);
 void engine_reset(void);
-void go_straight(int seconds);
+void go_straight(int);
 void go_back(int seconds);
 void engine_stop(void);
 void turn(int angle, int direction);
