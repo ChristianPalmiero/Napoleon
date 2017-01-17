@@ -288,7 +288,8 @@ bool bt_term = false;
 
 void *bt_send(){
     while(!bt_term){
-        bt_send_position();
+	if(moving)
+             bt_send_position();
         sleep(2);
     }
     return NULL;
