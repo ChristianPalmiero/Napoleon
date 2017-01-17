@@ -12,9 +12,9 @@ int bt_check();
 /*  Sending */
 
 ssize_t bt_send_ack(uint16_t ackId, uint8_t dest, uint8_t statusCode);
-ssize_t bt_send_next(uint8_t ally);
+ssize_t bt_send_next();
 ssize_t bt_send_position();
-ssize_t bt_send_ball(uint8_t ally, uint8_t pick_notDrop, int16_t x, int16_t y);
+ssize_t bt_send_ball();
 
 /*  Receiving */
 

@@ -122,7 +122,7 @@ ssize_t bt_send_ack(uint16_t ackId, uint8_t dest, uint8_t statusCode){
 }
 
 /* Send a NEXT message to the ally */
-ssize_t bt_send_next(uint8_t ally){
+ssize_t bt_send_next(){
     char string[58];
 
     // Remember to increment msgId
@@ -165,8 +165,21 @@ ssize_t bt_send_position(){
 }
 
 /* Send a BALL message to the ally */
-ssize_t bt_send_ball(uint8_t ally, uint8_t pick_notDrop, int16_t x, int16_t y){
+ssize_t bt_send_ball(){
     char string[58];
+    float x, y;
+    int heading;
+    int16_t x1, y1;
+    uint8_t pick_notDrop;
+   
+    get_position_and_heading(&x, &y, &heading); 
+    x1 = (int16_t)x;
+    y1 = (int16_t)y;
+
+    if(role==0)
+	pick_notDrop=0;
+    else
+	pick_notDrop=1;
 
     // Remember to increment msgId
     *((uint16_t *) string) = msgId++;
@@ -175,10 +188,10 @@ ssize_t bt_send_ball(uint8_t ally, uint8_t pick_notDrop, int16_t x, int16_t y){
     string[4] = MSG_BALL;
     string[5] = pick_notDrop;
     // Little endian representation
-    string[6] = (uint8_t)(x);
-    string[7] = (uint8_t)(x>>8);
-    string[8] = (uint8_t)(y);
-    string[9] = (uint8_t)(y>>8);
+    string[6] = (uint8_t)(x1);
+    string[7] = (uint8_t)(x1>>8);
+    string[8] = (uint8_t)(y1);
+    string[9] = (uint8_t)(y1>>8);
 
     /* Return number of bytes written */
     return write(s, string, 10);
@@ -223,10 +236,7 @@ int bt_recv_start(char * msg){
         printf ("Received Start message with role=%u, side=%u, ally=%u!\n", role, side, ally);
         if(role==0){
 	    moving=true;
-	    if(side==0)
-	        arena_big_beginner(1);
-	    else
-		arena_big_beginner(-1);
+	    arena_small_beginner();
 	}
         return 0;
     } else {
