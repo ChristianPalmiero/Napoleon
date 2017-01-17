@@ -57,25 +57,6 @@ void arena_big_finisher(int s){
     go_to_XY(s*110.0, 19.0);
 }
 
-// START WITH BALL ENGINE OPEN!!!!!!!!
-void test5(){
-    eye_start();
-    while(!ball_inside){
-    	go_straight(350);
-    	if(!ball_inside){
-	    turn2(60);
-	}
-	if(!ball_inside){
-	    turn2(-120);
-	}
-	if(!ball_inside){
-	    turn2(60);
-	}
-    }
-    eye_stop();
-}
-
-
 int main ( void ) {
     signal(SIGINT, intHandler);
 
@@ -83,12 +64,9 @@ int main ( void ) {
     engine_init();
     sn_init();
 
-    position_start(100.0, 100.0, 0);
     /* if connected */
     if( bt_init() == 0 ) {
         printf("Connected!\n");
-        //for(int i=0; i<4; i++)
-	    //bt_check();
         bt_start_trasmit();
         while(1){
 	    bt_check();
@@ -99,11 +77,4 @@ int main ( void ) {
         sleep (2);
         exit (EXIT_FAILURE);
     }
-
-    //arena_big_beginner();
-    
-    bt_close();
-    position_stop();
-    engine_reset();
-    ev3_uninit();
 }
