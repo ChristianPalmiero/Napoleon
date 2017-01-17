@@ -236,7 +236,10 @@ int bt_recv_start(char * msg){
         printf ("Received Start message with role=%u, side=%u, ally=%u!\n", role, side, ally);
         if(role==0){
 	    moving=true;
-	    arena_small_beginner();
+	    if(side==0)
+                arena_big_beginner(1);
+            else
+                arena_big_beginner(-1);
 	}
         return 0;
     } else {
