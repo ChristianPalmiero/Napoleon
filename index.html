@@ -59,9 +59,15 @@ You can see on my pictures how fancy I am :) </p>
 <a class="fancybox" rel="group" href="images/big/Napoleon_overview.jpg"><img src="images/small/Napoleon_overview.jpg" alt="" /></a>
 <h3>
 <a id="architecture" class="anchor" href="#architecture" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Architecture of the robot</h3>
-
-TODO: more technical
-
+<br>You can click on each photo to enlarge it.
+<br>For the ball management we used simple approach as presented on the picture below. The mechanism is mounted to engine.
+<br><a class="fancybox" rel="group" href="images/big/Napoleon_right.jpg"><img src="images/small/Napoleon_right.jpg" alt="" height="200" /></a>
+<br>The mechanism can move up and down to grab the ball. In picture below the grabbing mechanism is ready to grab the ball:
+<br><a class="fancybox" rel="group" href="images/big/Napoleon_overview2.jpg"><img src="images/small/Napoleon_overview2.jpg" alt="" height="200" /></a>
+The pictures above show also the mounting of the gyro which is used to track the position of the roobot.
+<br>For detecting the ball we used two sensors: sonar sensor and colour sensor. The mounting is showed on pictures below:
+<br><a class="fancybox" rel="group" href="images/big/Napoleon_front.jpg"><img src="images/small/Napoleon_front.jpg" alt="" height="200" /></a>
+<a class="fancybox" rel="group" href="images/big/Napoleon_underside.jpg"><img src="images/small/Napoleon_underside.jpg" alt="" height="200" /></a>
 
 <h3>
 <a id="algorithms" class="anchor" href="#algorithms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Algorithms</h3>
@@ -98,8 +104,6 @@ TODO: more technical
 	
 	<li><b>Ball management and ball detection</b>
 	<br>
-	<br>For the ball management we used simple approach as presented on the picture below:
-	<br>TODO: PICTURE
 	<p> To find the ball we implemented <a href="https://github.com/ChristianPalmiero/Napoleon/blob/master/src/nav.c" target="_blank">find_ball()</a> function.
 	This function is using the data provided by <a href="https://github.com/ChristianPalmiero/Napoleon/blob/master/src/eye.c" target="_blank">eye.c</a> thread. 
 	The eye when initialized is gathering the information from the colour sensor and ultra sound sensor and then can feed 
