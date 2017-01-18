@@ -37,7 +37,7 @@
       <div class="inner">
         <h1>Napoleon</h1>
         <h2>Ev3 Lego robot built to be the winner of a OS 2017 relay race</h2>
-        <a href="https://github.com/EmilyTheStrange/Napoleon" class="button"><small>View project on</small> GitHub</a>
+        <a href="https://github.com/ChristianPalmiero/Napoleon" class="button"><small>View project on</small> GitHub</a>
       </div>
     </header>
 
@@ -56,18 +56,18 @@ I was born in November 2016 in EURECOM so I am a Newbie in relay race. But I am 
 
 You can see on my pictures how fancy I am :) </p>
 
-<a class="fancybox" rel="group" href="images/big/Napoleon_overview.jpg"><img src="images/small/Napoleon_overview.jpg" alt="" /></a>
+<center><a class="fancybox" rel="group" href="images/big/Napoleon_overview.jpg"><img src="images/small/Napoleon_overview.jpg" alt="" /></a></center>
 <h3>
 <a id="architecture" class="anchor" href="#architecture" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Architecture of the robot</h3>
 <br>You can click on each photo to enlarge it.
 <br>For the ball management we used simple approach as presented on the picture below. The mechanism is mounted to engine.
-<br><a class="fancybox" rel="group" href="images/big/Napoleon_right.jpg"><img src="images/small/Napoleon_right.jpg" alt="" height="200" /></a>
+<br><center><a class="fancybox" rel="group" href="images/big/Napoleon_right.jpg"><img src="images/small/Napoleon_right.jpg" alt="" height="200" /></center></a>
 <br>The mechanism can move up and down to grab the ball. In picture below the grabbing mechanism is ready to grab the ball:
-<br><a class="fancybox" rel="group" href="images/big/Napoleon_overview2.jpg"><img src="images/small/Napoleon_overview2.jpg" alt="" height="200" /></a>
-The pictures above show also the mounting of the gyro which is used to track the position of the roobot.
+<br><center><a class="fancybox" rel="group" href="images/big/Napoleon_overview2.jpg"><img src="images/small/Napoleon_overview2.jpg" alt="" height="200" /></center></a>
+<br>The pictures above show also the mounting of the gyro which is used to track the position of the roobot.
 <br>For detecting the ball we used two sensors: sonar sensor and colour sensor. The mounting is showed on pictures below:
-<br><a class="fancybox" rel="group" href="images/big/Napoleon_front.jpg"><img src="images/small/Napoleon_front.jpg" alt="" height="200" /></a>
-<a class="fancybox" rel="group" href="images/big/Napoleon_underside.jpg"><img src="images/small/Napoleon_underside.jpg" alt="" height="200" /></a>
+<br><center><a class="fancybox" rel="group" href="images/big/Napoleon_front.jpg"><img src="images/small/Napoleon_front.jpg" alt="" height="200" /></a>
+<a class="fancybox" rel="group" href="images/big/Napoleon_underside.jpg"><img src="images/small/Napoleon_underside.jpg" alt="" height="200" /></center></a>
 
 <h3>
 <a id="algorithms" class="anchor" href="#algorithms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Algorithms</h3>
@@ -112,23 +112,49 @@ The pictures above show also the mounting of the gyro which is used to track the
 </ol>
 
 <h3>
+<a id="htu-code" class="anchor" href="#htu-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to use source code</h3>
+<ol>
+	<li>Download ev3dev onto SD card from <a href="http://www.ev3dev.org/download/">here</a>.</li>
+	<li>Boot ev3 brick and ssh into it.</li>
+	<li>Download ev3dev-c from <a href="https://github.com/in4lio/ev3dev-c">here</a>, compile it and install it on the brick.</li>
+	<li>Download our code from our <a href="https://github.com/ChristianPalmiero/Napoleon/">GitHub</a> and compile it using provided Makefile.</li>	
+	<li>Run it using main executable</li>
+</ol>
+<h3>
 <a id="source-code" class="anchor" href="#source-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Source code</h3>
 
 <p>TODO: Source code is no TOP SECRET but later on, it can be accessed on GitHub repository <a href="https://github.com/ChristianPalmiero/Napoleon"></a> that is now private. All instructions on how to use that source code: how to compile it, how to download it on the robot, and how to start the robot will be available there.</p>
 
 <h3>
-<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors</h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributors</h3>
 
-<p>Emilia Cebrat (<a href="https://github.com/EmilyTheStrange" class="user-mention">@EmilyTheStrange</a>), Kamil Maslowski (<a href="https://github.com/kmaslows" class="user-mention">@kmaslows</a>), and Christian Palmiero (<a href="https://github.com/ChristianPalmiero" class="user-mention">@ChristianPalmiero</a>) </p>
-
+ <p>Emilia Cebrat (<a href="https://github.com/EmilyTheStrange" class="user-mention">@EmilyTheStrange</a>), Kamil Maslowski (<a href="https://github.com/kmaslows" class="user-mention">@kmaslows</a>), and Christian Palmiero (<a href="https://github.com/ChristianPalmiero" class="user-mention">@ChristianPalmiero</a>) </p> 
+ <ul style="list-style-type:circle">
+	<li><b>Robot assembly and flag: </b><a href="https://github.com/EmilyTheStrange" class="user-mention">Emilia Cebrat </a>, <a href="https://github.com/kmaslows" class="user-mention">Kamil Maslowski</a>, <a href="https://github.com/ChristianPalmiero" class="user-mention"> Christian Palmiero</a></li>
+	<li><b>Position tracking: </b><a href="https://github.com/EmilyTheStrange" class="user-mention">Emilia Cebrat</a>, <a href="https://github.com/kmaslows" class="user-mention">Kamil Maslowski</a></li>
+	<li><b>Engine and movement: </b><a href="https://github.com/ChristianPalmiero" class="user-mention">Christian Palmiero</a>, <a href="https://github.com/kmaslows" class="user-mention">Kamil Maslowski</a></li>
+	<li><b>Ball detection and tracking: </b><a href="https://github.com/kmaslows" class="user-mention">Kamil Maslowski</a>, <a href="https://github.com/EmilyTheStrange" class="user-mention">Emilia Cebrat</a></li>
+	<li><b>Bluetooth and C&ampC: </b><a href="https://github.com/ChristianPalmiero" class="user-mention">Christian Palmiero</a></li>
+	<li><b>Race scenarios: </b><a href="https://github.com/EmilyTheStrange" class="user-mention">Emilia Cebrat</a>, <a href="https://github.com/kmaslows" class="user-mention">Kamil Maslowski</a>, <a href="https://github.com/ChristianPalmiero" class="user-mention"> Christian Palmiero</a></li>
+	<li><b>Website maintenace: </b><a href="https://github.com/EmilyTheStrange" class="user-mention">Emilia Cebrat</a>, <a href="https://github.com/kmaslows" class="user-mention">Kamil Maslowski</a></li>
+</ul>
 
         </section>
 
         <aside id="sidebar">
         
 
-          <p class="repo-owner"><a href="https://github.com/EmilyTheStrange/Napoleon"></a> is maintained by <a href="https://github.com/EmilyTheStrange">EmilyTheStrange</a>.</p>
+          <p class="repo-owner"><a href="https://github.com/ChristianPalmiero/Napoleon"></a> maintained by <a href="https://github.com/EmilyTheStrange">Emilia Cebrat</a>.</p>
 
+		  <h3>
+		<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors</h3>
+
+<p>
+<ul style="list-style-type:circle">
+	<li><a href="https://github.com/EmilyTheStrange" class="user-mention">Emilia Cebrat</a></li>
+    <li><a href="https://github.com/kmaslows" class="user-mention">Kamil Maslowski</a></li>
+	<li><a href="https://github.com/ChristianPalmiero" class="user-mention">Christian Palmiero</a></li></p>
+</ul>
           <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
         </aside>
       </div>
