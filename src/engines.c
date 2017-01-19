@@ -92,7 +92,7 @@ void engine_reset ( void )
  * Passing 0 as number of seconds means go forever */
 void go_straight ( int mseconds )
 {
-    int sleep_time = 100; // [ms]
+    int sleep_time = 250; // [ms]
     multi_set_tacho_stop_action_inx( sn_engineLR, TACHO_BRAKE );
     multi_set_tacho_polarity_inx( sn_engineLR, TACHO_NORMAL);
     multi_set_tacho_speed_sp( sn_engineLR, MAX_SPEED );
@@ -164,89 +164,6 @@ void engine_stop ( void )
     return;
 }
 
-/*Turn by x degrees. Negative value will turn to the left*/
-void turn( int x , int direction)
-{
-    engine_stop();
-    printf("Turning by: %d\n", x);
-    uint8_t sn_active;
-    uint8_t sn_passive;
-
-    if ( x > 0 && direction == TURN_FORWARD) {
-        sn_active  = sn_engineR;
-        sn_passive = sn_engineL;
-        set_tacho_polarity_inx( sn_active, TACHO_NORMAL);
-    } else if ( x < 0 && direction == TURN_FORWARD) {
-        sn_active  = sn_engineL;
-        sn_passive = sn_engineR;
-        set_tacho_polarity_inx( sn_active, TACHO_NORMAL);
-    } else  if ( x > 0 && direction == TURN_REVERSE ) {
-        sn_active  = sn_engineL;
-        sn_passive = sn_engineR;
-        set_tacho_polarity_inx( sn_active, TACHO_INVERSED);
-    } else  if ( x < 0 && direction == TURN_REVERSE ) {
-        sn_active  = sn_engineR;
-        sn_passive = sn_engineL;
-        set_tacho_polarity_inx( sn_active, TACHO_INVERSED);
-    } else {
-        return;
-    }
-
-    // Passive
-    set_tacho_stop_action_inx( sn_passive, TACHO_HOLD );
-    set_tacho_speed_sp( sn_passive, MAX_SPEED);
-    set_tacho_command_inx( sn_passive, TACHO_STOP );
-
-    // Active
-    set_tacho_speed_sp( sn_active, MAX_SPEED);
-    set_tacho_stop_action_inx( sn_active, TACHO_HOLD );
-
-    int current_angle = -sn_get_gyro_val();
-    int target_angle = current_angle + x;
-
-    // Start the active engine
-    set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-
-    // Gyro control loop
-    int deg_left = target_angle - current_angle;
-    int deg_left_abs = abs(deg_left);
-    int stage = 3;
-    while ( (deg_left > 0 && x > 0 ) || ((deg_left < 0) && x < 0)) { // TODO: Check gyro value +/-
-        current_angle = -sn_get_gyro_val();
-        deg_left = target_angle - current_angle;
-        deg_left_abs = abs(deg_left);
-
-        printf("TURN: T: %d C: %d Deg_Left: %d\n",target_angle,current_angle,deg_left);
-
-        if ( stage == 1 && 0 < deg_left_abs && deg_left_abs <= 6 ) {
-            set_tacho_speed_sp( sn_active, 20);
-            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-            stage--;
-        } else if ( stage == 2 && deg_left_abs <= 15 ) {
-            set_tacho_speed_sp( sn_active, 75);
-            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-            stage--;
-        } else if ( stage == 3 && deg_left_abs <= 30 ) {
-            set_tacho_speed_sp( sn_active, 200);
-            set_tacho_command_inx( sn_active, TACHO_RUN_FOREVER );
-            stage--;
-        }
-        Sleep(50);
-    }
-    // HALT!
-    set_tacho_command_inx(sn_active, TACHO_STOP);
-    set_tacho_command_inx(sn_passive, TACHO_STOP);
-    Sleep(500); 
-
-    // TODO: Fix error
-    //current_angle = sn_get_gyro_val();
-    //int error = target_angle - current_angle;
-    //if (error > 1 || error < -1){
-    //    turn(error);
-    //}
-
-    return;
-}
 
 /*Turn by x degrees. Negative value will turn to the left*/
 void turn2( int x)
@@ -288,15 +205,15 @@ void turn2( int x)
 
         printf("TURN: T: %d C: %d Deg_Left: %d\n",target_angle,current_angle,deg_left);
 
-        if ( stage == 1 && 0 < deg_left_abs && deg_left_abs <= 6 ) {
+        if ( stage == 1 && 0 < deg_left_abs && deg_left_abs <= 10 ) {
             multi_set_tacho_speed_sp( sn_engineLR, 20);
             multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_FOREVER );
             stage--;
-        } else if ( stage == 2 && deg_left_abs <= 15 ) {
+        } else if ( stage == 2 && deg_left_abs <= 25 ) {
             multi_set_tacho_speed_sp( sn_engineLR, 75);
             multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_FOREVER );
             stage--;
-        } else if ( stage == 3 && deg_left_abs <= 30 ) {
+        } else if ( stage == 3 && deg_left_abs <= 35 ) {
             multi_set_tacho_speed_sp( sn_engineLR, 200);
             multi_set_tacho_command_inx( sn_engineLR, TACHO_RUN_FOREVER );
             stage--;

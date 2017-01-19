@@ -30,18 +30,18 @@ void go_to_XY(float xb, float yb){
     //multi_set_tacho_command_inx(sn_engineLR, TACHO_RUN_FOREVER);
     Sleep(100);
     /// PHASE 3 - Error correction
-    while ( distance >= 10.0 ){
+    while ( distance >= 15.0 ){
         get_position_and_heading(&xa,&ya, &heading);
         get_dist_and_ang(xa,ya,xb,yb,heading,&distance,&rotation);
-        printf("GO_TO_XY: Distance: %.2f Rotation: %d towards X: %f Y:%f from X: %f Y:%f\n", distance, rotation, xb, yb, xa, ya);
+        printf("GO_TO_XY: Distance: %.2f Rotation: %d towards X: %.1f Y:%.1f from X: %.1f Y:%.1f\n", distance, rotation, xb, yb, xa, ya);
 
-        if (rotation > 20 || rotation < -20){
+        if (rotation > 10 || rotation < -10){
             turn2(rotation);
-        } else if ( rotation > 1 || rotation < -1 ){
+        } else {
             adjust_speed_by(rotation);
 	}
 
-        Sleep(100);
+        Sleep(250);
     }
     engine_stop();
 }

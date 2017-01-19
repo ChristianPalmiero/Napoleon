@@ -51,10 +51,10 @@ void arena_big_finisher(int s){
     go_to_XY(s*35.0, 280.0);
     go_to_XY(s*35.0, 205.0);
     turn2(s*90);
-    go_straight(1000);
+    go_straight(500);
     find_ball();
     go_to_XY(s*100.0, 205.0);
-    go_to_XY(s*110.0, 19.0);
+    go_to_XY(s*100.0, 25.0);
 }
 
 int main ( void ) {
@@ -63,8 +63,7 @@ int main ( void ) {
     if ( ev3_init() == -1 ) return ( 1 );
     engine_init();
     sn_init();
-    arena_big_beginner(-1);
-    /* if connected 
+    /* if connected  */
     if( bt_init() == 0 ) {
         printf("Connected!\n");
         bt_start_transmit();
@@ -77,5 +76,5 @@ int main ( void ) {
         sleep (2);
         exit (EXIT_FAILURE);
     }
-    */
+    engine_reset();
 }
