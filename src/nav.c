@@ -39,7 +39,7 @@ void go_to_XY(float xb, float yb){
             turn2(rotation);
         } else {
             adjust_speed_by(rotation);
-	}
+        }
 
         Sleep(250);
     }
@@ -52,28 +52,28 @@ void find_ball(){
     float val;
     eye_start();
     while(!ball_inside){
-        
-	init_head = get_heading();
-	printf("FIND BALL: Initial heading: %d\n", init_head);
+
+        init_head = get_heading();
+        printf("FIND BALL: Initial heading: %d\n", init_head);
         if(!ball_inside){
             turn2(angle);
         }
         if(!ball_inside){
-	    head = get_heading();
-	    printf("FIND BALL: heading: %d, turning by: %d\n", head, -2*(init_head-head));
+            head = get_heading();
+            printf("FIND BALL: heading: %d, turning by: %d\n", head, -2*(init_head-head));
             turn2(-2*(init_head-head));
         } 
-	
+
         if(!ball_inside && obstacle_detected(&val, &head_us)){
-	    printf("Obstacle detected!\n");
+            printf("Obstacle detected!\n");
             head = get_heading();
-	    printf("FIND BALL: head_us %d, head %d\n", head_us, head);
+            printf("FIND BALL: head_us %d, head %d\n", head_us, head);
             turn2(-(head_us-head));
-	    right_t = (int)((val-45)/290.0*1000);
-	    printf("FIND BALL: Right_t: %d\n", right_t);
-	    go_straight(right_t);
-	    angle = 30+45*((val-45)/(US_THRESHOLD-45));
-	}
+            right_t = (int)((val-45)/290.0*1000);
+            printf("FIND BALL: Right_t: %d\n", right_t);
+            go_straight(right_t);
+            angle = 30+45*((val-45)/(US_THRESHOLD-45));
+        }
         else if(!ball_inside){
             head = get_heading();
             turn2(-(init_head-head));
