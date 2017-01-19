@@ -63,8 +63,8 @@ int main ( void ) {
     if ( ev3_init() == -1 ) return ( 1 );
     engine_init();
     sn_init();
-
-    /* if connected */
+    arena_big_beginner(-1);
+    /* if connected 
     if( bt_init() == 0 ) {
         printf("Connected!\n");
         bt_start_transmit();
@@ -77,4 +77,5 @@ int main ( void ) {
         sleep (2);
         exit (EXIT_FAILURE);
     }
+    */
 }
