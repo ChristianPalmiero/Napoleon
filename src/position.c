@@ -12,34 +12,34 @@
 
 #define Sleep( msec ) usleep(( msec ) * 1000 )
 
-//* @brief Position thread update interval in miliseocnds */
+/** @brief Position thread update interval in miliseocnds */
 int update_interval = 100; // [ms]
 
-//* @brief wheel diameter in cm */
+/** @brief wheel diameter in cm */
 #define  WHEEL_DIAMETER 5.6 
 
-//* @brief Number of ticks  */
+/** @brief Number of ticks  */
 #define  TICKS_PER_REVOLUTION 360.0
 
-//*  @brief Scale factor to convert tick count into distance */
+/**  @brief Scale factor to convert tick count into distance */
 const float ENCODER_SCALE_FACTOR = M_PI * WHEEL_DIAMETER / TICKS_PER_REVOLUTION;
 
-//*  @brief Global variable to store X position component */
+/**  @brief Global variable to store X position component */
 float POS_X = 0.0;
 
-//*  @brief Global variable to store Y position component */
+/**  @brief Global variable to store Y position component */
 float POS_Y = 0.0;
 
-//*  @brief Global variable to store current heading */
+/**  @brief Global variable to store current heading */
 int HEADING = 0;
 
-//*  @brief Position thread ID */
+/**  @brief Position thread ID */
 pthread_t position_tid;
 
-//*  @brief Mutex used to synchronize access to global position variables */
+/**  @brief Mutex used to synchronize access to global position variables */
 pthread_mutex_t position_mutex;
 
-//*  @brief Global variable used to terminate the position thread */
+/**  @brief Global variable used to terminate the position thread */
 bool position_terminate = false;
 
 
