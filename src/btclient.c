@@ -12,7 +12,8 @@
 #include <errno.h>
 #include <sys/fcntl.h>
 #include <pthread.h>
-
+#include "main.h"
+#include "engines.h"
 #define SERV_ADDR   "70:56:81:92:89:AA"     /* TO BE DEFINED: (Whatever the address of the server is) */
 #define TEAM_ID     5                       /* Napoleon ID */
 
@@ -67,7 +68,7 @@ int bt_check(){
 
     /* Read from server */
     nbyte = read (s, msg, 10);
-
+    printf("BT RECIEVED message type: %d of size %d\n", (int)msg[4], nbyte);
     if(nbyte==-1){
         fprintf (stderr, "Server unexpectedly closed connection...\n");
         bt_close (s);
@@ -111,7 +112,7 @@ int bt_check(){
 /* Send an ACK message */
 ssize_t bt_send_ack(uint16_t ackId, uint8_t dest, uint8_t statusCode){
     char string[58];
-
+    printf("BT Sending ACK\n");
     // Remember to increment msgId
     *((uint16_t *) string) = msgId++;
     string[2] = TEAM_ID;
@@ -127,7 +128,7 @@ ssize_t bt_send_ack(uint16_t ackId, uint8_t dest, uint8_t statusCode){
 /* Send a NEXT message to the ally */
 ssize_t bt_send_next(){
     char string[58];
-
+    printf("BT Sending next\n");
     // Remember to increment msgId
     *((uint16_t *) string) = msgId++;
     string[2] = TEAM_ID;
@@ -168,28 +169,22 @@ ssize_t bt_send_position(){
 }
 
 /* Send a BALL message to the ally */
-ssize_t bt_send_ball(){
+ssize_t bt_send_ball(uint8_t val){
     char string[58];
     float x, y;
     int heading;
     int16_t x1, y1;
-    uint8_t pick_notDrop;
-
+    printf("BT sending ball position\n");
     get_position_and_heading(&x, &y, &heading); 
     x1 = (int16_t)x;
     y1 = (int16_t)y;
-
-    if(role==ROLE_BEGINNER)
-        pick_notDrop=0;
-    else
-        pick_notDrop=1;
 
     // Remember to increment msgId
     *((uint16_t *) string) = msgId++;
     string[2] = TEAM_ID;
     string[3] = ally;
     string[4] = MSG_BALL;
-    string[5] = pick_notDrop;
+    string[5] = val;
     // Little endian representation
     string[6] = (uint8_t)(x1);
     string[7] = (uint8_t)(x1>>8);
@@ -204,37 +199,33 @@ ssize_t bt_send_ball(){
 
 /* Receive an ACK message from the server */
 int bt_recv_ack(char * msg){
-    if (msg[4] == MSG_ACK){
-        printf("Received Ack message id=%u with status code=%u\n", *((uint16_t *) msg[5]), (uint16_t)msg[7]);
-        return 0;
-    } else {
-        return -1;
-    }
+    printf("BT Recv ACK called");
+    fflush(stdout);
+    //printf("Received Ack message id=%u with status code=%u\n", *((uint16_t *) msg[5]), (uint8_t)msg[7]);
+    return 0;
 };
 
 /* Receive a NEXT message from the server */
 int bt_recv_next(char * msg){
     static int cnt=0;
-    
+
     if (msg[4] == MSG_NEXT){
         printf("Recieved Next message\n");
         bt_send_ack(*((uint16_t *) msg), ally, 0);
-        if(role==ROLE_FOLLOWER){
-            moving=true;
-            //Big arena
-            if(arena==ARENA_BIG)
-                if(side==SIDE_RIGHT)
-                    arena_big_finisher(1);
-                else
-                    arena_big_finisher(-1);
-            //Small arena 
+        moving=true;
+        //Big arena
+        if(arena==ARENA_BIG)
+            if(side==SIDE_RIGHT)
+                arena_big_finisher(1);
+            else
+                arena_big_finisher(-1);
+        //Small arena 
+        else{
+            if(role==ROLE_BEGINNER){
+                arena_small_finisher(SIDE_RIGHT);
+            }
             else{
-                if(side==SIDE_RIGHT){
-                    arena_small_finisher(SIDE_RIGHT);
-                }
-                else{
-                    arena_small_finisher(SIDE_LEFT);
-                }
+                arena_small_finisher(SIDE_LEFT);
             }
         }
         return 0;
@@ -276,7 +267,6 @@ int bt_recv_stop(char * msg){
         bt_close();
         position_stop();
         engine_reset();
-        ev3_uninit();
         return 0;
     } else {
         return -1;

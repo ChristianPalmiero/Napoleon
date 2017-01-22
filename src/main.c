@@ -25,7 +25,8 @@ void arena_small_finisher(int s){
         position_start(90,175,180);
         go_to_XY(90,100);
         go_to_XY(70, 100);
-        find_ball();  
+        find_ball(); 
+        bt_send_ball(1); 
         go_to_XY(90,30);
         arena_small_beginner(s);
     } else {
@@ -34,6 +35,7 @@ void arena_small_finisher(int s){
         go_to_XY(30,100);
         go_to_XY(50, 100);
         find_ball();  
+        bt_send_ball(1); 
         go_to_XY(30,30);
         arena_small_beginner(s);
     }
@@ -46,10 +48,10 @@ void arena_small_beginner(int s){
         // Beginner right side
         position_start(90,30,0);
         go_to_XY(90, 100);
-        go_to_XY(70,100);
+        go_to_XY(65,100);
         sleep(4);
         open_ball(); 
-        bt_send_ball();  
+        bt_send_ball(0);  
         go_back(1);
         go_to_XY(90,175);
         bt_send_next();
@@ -57,10 +59,10 @@ void arena_small_beginner(int s){
         // Beginer left side
         position_start(30,30,0);
         go_to_XY(30, 100);
-        go_to_XY(50,100);
+        go_to_XY(55,100);
         sleep(4);
         open_ball(); 
-        bt_send_ball();  
+        bt_send_ball(0);  
         go_back(1);
         go_to_XY(30,175);
         bt_send_next();
@@ -76,7 +78,7 @@ void arena_big_beginner(int s){
     turn2(180);
     sleep(4);
     open_ball();
-    bt_send_ball();
+    bt_send_ball(0);
     go_back(1);
     turn2(s*90);
     go_to_XY(s*30.0, 380.0);
@@ -91,7 +93,7 @@ void arena_big_finisher(int s){
     turn2(s*90);
     go_straight(500);
     find_ball();
-    bt_send_ball();
+    bt_send_ball(1);
     go_to_XY(s*100.0, 205.0);
     go_to_XY(s*100.0, 25.0);
     bt_send_next();

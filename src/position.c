@@ -34,7 +34,7 @@ float POS_Y = 0.0;
 int HEADING = 0;
 
 /**  @brief Position thread ID */
-pthread_t position_tid;
+pthread_t position_tid = 0;
 
 /**  @brief Mutex used to synchronize access to global position variables */
 pthread_mutex_t position_mutex;
@@ -96,6 +96,8 @@ void * update_position(){
 }
 
 void position_start(float x_start, float y_start, int heading){
+    if (position_tid != 0)
+        return;
     pthread_mutex_init(&position_mutex, NULL);
     pthread_mutex_lock(&position_mutex);
     HEADING = heading;

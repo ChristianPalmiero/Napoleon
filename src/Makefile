@@ -1,5 +1,5 @@
 CC=arm-linux-gnueabi-gcc
-CFLAGS=-O3 -W -Wall -Wno-comment -std=gnu99 -I../../ev3dev-c/source/ev3 
+CFLAGS=-O0 -ggdb3 -W -Wall -Wno-comment -std=gnu99 -I../../ev3dev-c/source/ev3 
 LIBS=-lm -lev3dev-c -lpthread -lbluetooth
 ODIR=../obj
 

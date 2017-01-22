@@ -14,7 +14,7 @@ int bt_check();
 ssize_t bt_send_ack(uint16_t ackId, uint8_t dest, uint8_t statusCode);
 ssize_t bt_send_next();
 ssize_t bt_send_position();
-ssize_t bt_send_ball();
+ssize_t bt_send_ball(uint8_t val);
 
 /*  Receiving */
 
