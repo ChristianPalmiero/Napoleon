@@ -1,5 +1,3 @@
-#include "position.h"
-#include "engines.h"
 #include <time.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -11,23 +9,38 @@
 
 #define Sleep( msec ) usleep(( msec ) * 1000 )
 
-
+//*  Position thread update interval in miliseocnds */
 int update_interval = 100; // [ms]
+
+//* /brief wheel diameter in cm */
 #define  WHEEL_DIAMETER 5.6 
+
+//*  /brief Number of ticks  */
 #define  TICKS_PER_REVOLUTION 360.0
+
+//*  Scale factor to convert tick count into distance */
 const float ENCODER_SCALE_FACTOR = M_PI * WHEEL_DIAMETER / TICKS_PER_REVOLUTION;
 
+//*  \brief Global variable to store X position component */
 float POS_X = 0.0;
+
+//*  \brief Global variable to store Y position component */
 float POS_Y = 0.0;
+
+//*  \brief Global variable to store current heading */
 int HEADING = 0;
 
+//*  \brief Position thread ID */
 pthread_t position_tid;
+
+//*  \brief Mutex used to synchronize access to global position variables */
 pthread_mutex_t position_mutex;
+
+//*  \brief Global variable used to terminate the position thread */
 bool position_terminate = false;
 
 
 void * update_position(){
-
     int ticks_left_prev;
     int ticks_left;
     int ticks_right_prev;
@@ -63,8 +76,6 @@ void * update_position(){
         // CALCULATE NEW X,Y
         pthread_mutex_lock(&position_mutex);
         HEADING += rotation;
-//        POS_X += displacement*sin(angle*M_PI/180.0);
-//      POS_Y += displacement*cos(angle*M_PI/180.0);
   
         POS_X += displacement*sin(HEADING*M_PI/180.0);
         POS_Y += displacement*cos(HEADING*M_PI/180.0);
@@ -106,7 +117,6 @@ void get_dist_and_ang(float xa, float ya, float xb, float yb, int heading, float
     float y = yb-ya;
     float angle = atan2(y,x)*180.0/M_PI;
 
-    // TODO: CHECK THIS UNWRAPING
     heading = heading % 360;
 
     int rotation = ((int)roundf(angle))-(90-heading);
