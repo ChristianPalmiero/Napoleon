@@ -26,7 +26,7 @@
 #define MSG_BALL    7
 
 uint16_t msgId = 0x0000;
-int s=0;
+int s=0, arena;
 bool moving=false;
 uint8_t role, side, ally;    
 
@@ -216,10 +216,15 @@ int bt_recv_next(char * msg){
         bt_send_ack(*((uint16_t *) msg), ally, 0);
 	if(role==1){
 	    moving=true;
-	    if(side==0)
-                arena_big_finisher(1);
-            else
-                arena_big_finisher(-1);
+	    //Big arena
+	    if(arena==1)
+		if(side==0)
+                    arena_big_finisher(1);
+                else
+                    arena_big_finisher(-1);
+    	    //Small arena 
+	    else
+		arena_small_finisher();
 	}
         return 0;
     } else {
@@ -236,10 +241,15 @@ int bt_recv_start(char * msg){
         printf ("Received Start message with role=%u, side=%u, ally=%u!\n", role, side, ally);
         if(role==0){
 	    moving=true;
+	//Big arena
+	if(arena==1)
 	    if(side==0)
                 arena_big_beginner(1);
             else
                 arena_big_beginner(-1);
+	//Small arena
+	else
+	    arena_small_finisher();
 	}
         return 0;
     } else {

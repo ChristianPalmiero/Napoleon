@@ -22,7 +22,9 @@ void arena_small_finisher(){
     go_to_XY(30,100);
     go_to_XY(50, 100);
     find_ball();  
+    bt_send_ball();
     go_to_XY(30,30);
+    bt_send_next();
 }
 
 void arena_small_beginner(){
@@ -30,9 +32,11 @@ void arena_small_beginner(){
     go_to_XY(90, 100);
     go_to_XY(70,100);
     sleep(4);
-    open_ball();  
+    open_ball(); 
+    bt_send_ball();  
     go_back(1);
     go_to_XY(90,175);
+    bt_send_next();
 }
 
 void arena_big_beginner(int s){
@@ -63,9 +67,10 @@ void arena_big_finisher(int s){
     bt_send_next();
 }
 
-int main ( void ) {
+int main (int argc, char** argv ) {
     signal(SIGINT, intHandler);
 
+    arena = atoi(argv[1]);
     if ( ev3_init() == -1 ) return ( 1 );
     engine_init();
     sn_init();

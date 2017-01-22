@@ -31,8 +31,7 @@ void bt_stop_transmit();
 
 /* Variables */
 
-//extern uint16_t msgId;
-//extern int s;
+extern int arena;
 extern uint8_t role, side, ally;
 
 #endif
