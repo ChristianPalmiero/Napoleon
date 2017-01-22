@@ -249,7 +249,7 @@ int bt_recv_start(char * msg){
                 arena_big_beginner(-1);
 	//Small arena
 	else
-	    arena_small_finisher();
+	    arena_small_beginner();
 	}
         return 0;
     } else {

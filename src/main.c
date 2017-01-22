@@ -18,6 +18,7 @@ void intHandler() {
 }
 
 void arena_small_finisher(){
+    printf("Small arena finisher!\n");
     position_start(30,175,180);
     go_to_XY(30,100);
     go_to_XY(50, 100);
@@ -28,6 +29,7 @@ void arena_small_finisher(){
 }
 
 void arena_small_beginner(){
+    printf("Small arena beginner!\n");
     position_start(90,30,0);
     go_to_XY(90, 100);
     go_to_XY(70,100);
@@ -40,6 +42,7 @@ void arena_small_beginner(){
 }
 
 void arena_big_beginner(int s){
+    printf("Big arena beginner!\n");
     position_start(s*30.0, 19.0, 0);
     go_to_XY(s*100.0, 119.0);
     go_to_XY(s*100.0, 205.0);
@@ -55,6 +58,7 @@ void arena_big_beginner(int s){
 }
 
 void arena_big_finisher(int s){
+    printf("Big arena finisher!\n");
     position_start(s*90.0, 380.0, -180);
     go_to_XY(s*35.0, 280.0);
     go_to_XY(s*35.0, 205.0);
