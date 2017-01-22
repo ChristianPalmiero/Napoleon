@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <math.h>
 #include "sensors.h"
+#include "position.h"
+#include "engines.h"
+
 // BASED ON: http://www.robotnav.com/position-estimation/
 
 #define Sleep( msec ) usleep(( msec ) * 1000 )
@@ -60,15 +63,15 @@ void * update_position(){
     while(!position_terminate){
         get_encoders_values(&ticks_left,&ticks_right);
         // INVERT DISPLACMENT - DUE TO ENGINES BEING MOUNTED UPSIDE DOWN
-	if(abs(ticks_left - ticks_left_prev) > 720 ){
+        if(abs(ticks_left - ticks_left_prev) > 720 ){
             ticks_left=-ticks_left;
-	}
-	if(abs(ticks_right - ticks_right_prev) > 720 ){
-	    ticks_right=-ticks_right;
-	}
-	diff_left  = (ticks_left - ticks_left_prev);
+        }
+        if(abs(ticks_right - ticks_right_prev) > 720 ){
+            ticks_right=-ticks_right;
+        }
+        diff_left  = (ticks_left - ticks_left_prev);
         diff_right = (ticks_right -ticks_right_prev);
-	displacement = (diff_left+diff_right) * ENCODER_SCALE_FACTOR / 2.0;
+        displacement = (diff_left+diff_right) * ENCODER_SCALE_FACTOR / 2.0;
 
         angle = sn_get_gyro_val();
         rotation = angle-angle_prev;
@@ -76,14 +79,14 @@ void * update_position(){
         // CALCULATE NEW X,Y
         pthread_mutex_lock(&position_mutex);
         HEADING += rotation;
-  
+
         POS_X += displacement*sin(HEADING*M_PI/180.0);
         POS_Y += displacement*cos(HEADING*M_PI/180.0);
-      pthread_mutex_unlock(&position_mutex);
+        pthread_mutex_unlock(&position_mutex);
 
         //printf("POS: X:\t %.2f \t Y: \t %.2f A: %d D: %.02f, DiffL: %d, DiffR: %d\n",POS_X,POS_Y, HEADING, displacement, diff_left, diff_right); 
-	
-	//printf("Left ticks prev: %d, Left ticks: %d, Right ticks prev: %d, Right ticks: %d\n", ticks_left_prev, ticks_left, ticks_right_prev, ticks_right);	
+
+        //printf("Left ticks prev: %d, Left ticks: %d, Right ticks prev: %d, Right ticks: %d\n", ticks_left_prev, ticks_left, ticks_right_prev, ticks_right);	
 
         ticks_left_prev = ticks_left;
         ticks_right_prev = ticks_right;
