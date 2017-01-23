@@ -55,14 +55,15 @@ void * update_position(){
     int angle_prev = 0;
     float displacement;
 
-    // Get initial values
-
+    /** Get initial values */
     get_encoders_values(&ticks_left_prev,&ticks_right_prev);
     angle_prev = sn_get_gyro_val();
-
+    
+    /** Repeat until there is order to terminate */
     while(!position_terminate){
+        /** Get values of ticks from encoders */
         get_encoders_values(&ticks_left,&ticks_right);
-        // INVERT DISPLACMENT - DUE TO ENGINES BEING MOUNTED UPSIDE DOWN
+        /** Calculate dispalcement */
         if(abs(ticks_left - ticks_left_prev) > 720 ){
             ticks_left=-ticks_left;
         }
@@ -72,14 +73,16 @@ void * update_position(){
         diff_left  = (ticks_left - ticks_left_prev);
         diff_right = (ticks_right -ticks_right_prev);
         displacement = (diff_left+diff_right) * ENCODER_SCALE_FACTOR / 2.0;
-
+        
+        /** Get heading  from gyro */
         angle = sn_get_gyro_val();
+        /** Calculate rotation */
         rotation = angle-angle_prev;
+        /** Get mutex and update position */
         angle_prev = angle;
-        // CALCULATE NEW X,Y
         pthread_mutex_lock(&position_mutex);
         HEADING += rotation;
-
+        
         POS_X += displacement*sin(HEADING*M_PI/180.0);
         POS_Y += displacement*cos(HEADING*M_PI/180.0);
         pthread_mutex_unlock(&position_mutex);
@@ -96,16 +99,20 @@ void * update_position(){
 }
 
 void position_start(float x_start, float y_start, int heading){
+    /** Do nothing if position thread is already existing */
     if (position_tid != 0)
         return;
+    /** Create mutex for synchronizing position updates  */
     pthread_mutex_init(&position_mutex, NULL);
     pthread_mutex_lock(&position_mutex);
+    /** Set initial position values */
     HEADING = heading;
     POS_X = x_start;
     POS_Y = y_start;
     pthread_mutex_unlock(&position_mutex);
 
     printf("Creating position tracking threat... ");
+    /** Create position thread */
     pthread_create(&position_tid, NULL, update_position, NULL);
     printf("Done\n");
 }
@@ -118,14 +125,19 @@ void position_stop(){
 }
 
 void get_dist_and_ang(float xa, float ya, float xb, float yb, int heading, float * out_dist, int * out_rotation){
+    /** Shift the coordinate system */
     float x = xb-xa;
     float y = yb-ya;
+    /** get angle between two points */
     float angle = atan2(y,x)*180.0/M_PI;
-
+    
+    /** Unwrap heading */
     heading = heading % 360;
 
+    /** Calculate rotation */
     int rotation = ((int)roundf(angle))-(90-heading);
-
+    
+    /** Fix rotation to rotation in most convinient direction */
     if (rotation > 180){
         rotation -= 360;
     } else if ( rotation < -180 ) {
