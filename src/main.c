@@ -17,28 +17,54 @@ void intHandler() {
     exit(0);
 }
 
-void arena_small_finisher(){
+void arena_small_finisher(int s){
+    // s: 1 left, 0 right
     printf("Small arena finisher!\n");
-    position_start(30,175,180);
-    go_to_XY(30,100);
-    go_to_XY(50, 100);
-    find_ball();  
-    bt_send_ball();
-    go_to_XY(30,30);
-    bt_send_next();
+    if ( s == 0){
+        // Finisher right side
+        position_start(90,175,180);
+        go_to_XY(90,100);
+        go_to_XY(70, 100);
+        find_ball();  
+        go_to_XY(90,30);
+        arena_small_beginner(s);
+    } else {
+        // Finisher left side
+        position_start(30,175,180);
+        go_to_XY(30,100);
+        go_to_XY(50, 100);
+        find_ball();  
+        go_to_XY(30,30);
+        arena_small_beginner(s);
+    }
 }
 
-void arena_small_beginner(){
+void arena_small_beginner(int s){
+    // s: 1 left, 0 right
     printf("Small arena beginner!\n");
-    position_start(90,30,0);
-    go_to_XY(90, 100);
-    go_to_XY(70,100);
-    sleep(4);
-    open_ball(); 
-    bt_send_ball();  
-    go_back(1);
-    go_to_XY(90,175);
-    bt_send_next();
+    if (s == 0){
+        // Beginner right side
+        position_start(90,30,0);
+        go_to_XY(90, 100);
+        go_to_XY(70,100);
+        sleep(4);
+        open_ball(); 
+        bt_send_ball();  
+        go_back(1);
+        go_to_XY(90,175);
+        bt_send_next();
+    } else {
+        // Beginer left side
+        position_start(30,30,0);
+        go_to_XY(30, 100);
+        go_to_XY(50,100);
+        sleep(4);
+        open_ball(); 
+        bt_send_ball();  
+        go_back(1);
+        go_to_XY(30,175);
+        bt_send_next();
+    }
 }
 
 void arena_big_beginner(int s){
@@ -83,7 +109,7 @@ int main (int argc, char** argv ) {
         printf("Connected!\n");
         bt_start_transmit();
         while(1){
-	    bt_check();
+            bt_check();
         }
     }
     else {

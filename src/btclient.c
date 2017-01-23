@@ -29,6 +29,9 @@ uint16_t msgId = 0x0000;
 int s=0, arena;
 bool moving=false;
 uint8_t role, side, ally;    
+enum role_def { ROLE_BEGINNER, ROLE_FOLLOWER};
+enum side_def { SIDE_RIGHT, SIDE_LEFT };
+enum arena_def { ARENA_SMALL, ARENA_BIG};
 
 /* Initialize bluetooth connection */
 int bt_init(){
@@ -37,7 +40,7 @@ int bt_init(){
 
     /* Allocate a socket */
     s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
-    
+
     /* Set the connection parameters (who to connect to) */
     addr.rc_family = AF_BLUETOOTH;
     addr.rc_channel = (uint8_t) 1;
@@ -46,7 +49,7 @@ int bt_init(){
     /* Connect to server */
     status = connect(s, (struct sockaddr *)&addr, sizeof(addr));
     if(status!=0)
-	printf("Error: %d\n", errno);    
+        printf("Error: %d\n", errno);    
 
     /* Return 0 if connected */
     return status;
@@ -61,7 +64,7 @@ int bt_close(){
 int bt_check(){
     ssize_t nbyte;
     char msg[58]; 
-    
+
     /* Read from server */
     nbyte = read (s, msg, 10);
 
@@ -143,7 +146,7 @@ ssize_t bt_send_position(){
     float x, y;
     int heading;
     int16_t x1, y1;
-   
+
     get_position_and_heading(&x, &y, &heading); 
     x1 = (int16_t)x;
     y1 = (int16_t)y;
@@ -171,15 +174,15 @@ ssize_t bt_send_ball(){
     int heading;
     int16_t x1, y1;
     uint8_t pick_notDrop;
-   
+
     get_position_and_heading(&x, &y, &heading); 
     x1 = (int16_t)x;
     y1 = (int16_t)y;
 
-    if(role==0)
-	pick_notDrop=0;
+    if(role==ROLE_BEGINNER)
+        pick_notDrop=0;
     else
-	pick_notDrop=1;
+        pick_notDrop=1;
 
     // Remember to increment msgId
     *((uint16_t *) string) = msgId++;
@@ -211,21 +214,29 @@ int bt_recv_ack(char * msg){
 
 /* Receive a NEXT message from the server */
 int bt_recv_next(char * msg){
+    static int cnt=0;
+    
     if (msg[4] == MSG_NEXT){
         printf("Recieved Next message\n");
         bt_send_ack(*((uint16_t *) msg), ally, 0);
-	if(role==1){
-	    moving=true;
-	    //Big arena
-	    if(arena==1)
-		if(side==0)
+        if(role==ROLE_FOLLOWER){
+            moving=true;
+            //Big arena
+            if(arena==ARENA_BIG)
+                if(side==SIDE_RIGHT)
                     arena_big_finisher(1);
                 else
                     arena_big_finisher(-1);
-    	    //Small arena 
-	    else
-		arena_small_finisher();
-	}
+            //Small arena 
+            else{
+                if(side==SIDE_RIGHT){
+                    arena_small_finisher(SIDE_RIGHT);
+                }
+                else{
+                    arena_small_finisher(SIDE_LEFT);
+                }
+            }
+        }
         return 0;
     } else {
         return -1;
@@ -239,18 +250,18 @@ int bt_recv_start(char * msg){
         side = (uint8_t) msg[6];
         ally = (uint8_t) msg[7];
         printf ("Received Start message with role=%u, side=%u, ally=%u!\n", role, side, ally);
-        if(role==0){
-	    moving=true;
-	//Big arena
-	if(arena==1)
-	    if(side==0)
-                arena_big_beginner(1);
+        if(role==ROLE_BEGINNER){
+            moving=true;
+            //Big arena
+            if(arena==ARENA_BIG)
+                if(side==SIDE_RIGHT)
+                    arena_big_beginner(1);
+                else
+                    arena_big_beginner(-1);
+            //Small arena
             else
-                arena_big_beginner(-1);
-	//Small arena
-	else
-	    arena_small_beginner();
-	}
+                arena_small_beginner(SIDE_RIGHT);
+        }
         return 0;
     } else {
         return -1;
@@ -289,9 +300,9 @@ int bt_recv_ball(char * msg){
 
     if (msg[4] == MSG_BALL) {
         x[0] = msg[7];
-	x[1] = msg[6];
+        x[1] = msg[6];
         y[0] = msg[9];
-	y[1] = msg[8];
+        y[1] = msg[8];
         printf ("Received Ball message with Ball=%u, X=%d, Y=%d!\n", (uint8_t)msg[5], (int16_t)x, (int16_t)y);
         bt_send_ack(*((uint16_t *) msg), ally, 0);
         return 0;
@@ -307,8 +318,8 @@ bool bt_term = false;
 
 void *bt_send(){
     while(!bt_term){
-	if(moving)
-             bt_send_position();
+        if(moving)
+            bt_send_position();
         sleep(2);
     }
     return NULL;
